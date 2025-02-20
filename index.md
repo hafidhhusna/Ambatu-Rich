@@ -1,8 +1,10 @@
 <h2 align="center">Tim Pengembang</h2>
 
 <p align="center">
-Mahsa Quereda Bahjah - 22/503299/TK/54984  
+Mahsa Quereda Bahjah - 22/503299/TK/54984 
+<br>
 Hafidh Husna - 22/498640/TK/54706  
+<br>
 Brian Tirafi Aufauzan - 22/497916/TK/54592  
 </p>
 
