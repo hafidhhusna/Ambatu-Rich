@@ -21,4 +21,6 @@ jobs:
           cache: "npm"
           cache-dependency-path: ambaturich/package-lock.json
       - run: npm i
+        working-directory: ambaturich
       - run: npm run build
+        working-directory: ambaturich
