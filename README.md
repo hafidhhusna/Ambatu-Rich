@@ -8,11 +8,12 @@
  <p align="start">Anggota 2: Brian Tirafi Aufauzan - 22/497916/TK/54592</p>
 </p>
 
+<br>
 <p align="center">
  <p align="center">AmbatuRich adalah Web untuk mengatur finansialmu. AmbatuRich membantu kamu untuk mengatur keuanganmu dengan baik dan menghemat uangmu.</p>
 </p>
 
-## Features 💼
+## Features
 
 1. Upload budgeting report
 
@@ -24,6 +25,7 @@
 
 5. Budgeting report
 
+<br>
 <p align="center">
 Developed by Kelompok AMBATUFINANCE
 </p>
