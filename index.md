@@ -6,7 +6,7 @@
 
 - Mahsa Quereda Bahjah - 22/503299/TK/54984
 - Hafidh Husna - 22/498640/TK/54706
-- Brian Tirafi Aufauzan - NIM
+- Brian Tirafi Aufauzan - 22/497916/TK/54592
 
 ## Departemen Teknik Elektro dan Teknologi Informasi
 
