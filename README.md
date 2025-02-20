@@ -3,7 +3,7 @@
 </p>
 <p align="center">
  <h2 align="center">Kelompok AmbaFinance</h2>
- <p align="start">Ketua Kelompok: Mahsa Quereda Bahjah</p>
+ <p align="start">Ketua Kelompok: Mahsa Quereda Bahjah - 22/503299/TK/54984</p>
  <p align="start">Anggota 1: Hafidh Husna - 22/498640/TK/54706</p>
  <p align="start">Anggota 2: Brian Tirafi Aufauzan - 22/497916/TK/54592</p>
 </p>
