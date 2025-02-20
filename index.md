@@ -1,33 +1,19 @@
-<div style="text-align: center;">
+<h2 align="center">Tim Pengembang</h2>
 
-# Ambatu-Rich
-
-**Helps your financial plan even better**  
-
-[View on GitHub](#)  
-
-</div>
-
-<div style="text-align: center; margin-top: 20px;">
-
-## Tim Pengembang  
-
+<p align="center">
 Mahsa Quereda Bahjah - 22/503299/TK/54984  
 Hafidh Husna - 22/498640/TK/54706  
 Brian Tirafi Aufauzan - 22/497916/TK/54592  
+</p>
 
-### Departemen Teknik Elektro dan Teknologi Informasi  
-Fakultas Teknik, Universitas Gadjah Mada  
-
-</div>
+<p align="center">
+<strong>Departemen Teknik Elektro dan Teknologi Informasi</strong><br>
+Fakultas Teknik, Universitas Gadjah Mada
+</p>
 
 ---
 
-<div style="text-align: center; margin-top: 20px;">
-  
-**Nama Produk:** Ambatu-Rich  
-
-</div>
+<p align="center"><strong>Nama Produk:</strong> Ambatu-Rich</p>
 
 ## Latar Belakang
 
