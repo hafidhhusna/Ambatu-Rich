@@ -1,5 +1,15 @@
+"use client";
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { signIn } from 'next-auth/react';
+import { getUserSession } from '@/lib/session';
+
+type Props = {};
+
+const handleGoogleSignIn = async (props: Props) => {
+  const session = await signIn('google' ,{callbackUrl: '/home'});
+}
 
 const Navbar: React.FC = () => {
   return (
@@ -24,7 +34,10 @@ const Navbar: React.FC = () => {
         </a>
       </nav>
 
-      <Button className="hidden md:flex rounded-full bg-gray-200 hover:bg-gray-300 text-[#070f18] px-6">
+      <Button className="hidden md:flex rounded-full bg-gray-200 hover:bg-gray-300 text-[#070f18] px-6"
+      onClick={() => {
+        handleGoogleSignIn({});
+      }}>
         Sign In
       </Button>
     </header>

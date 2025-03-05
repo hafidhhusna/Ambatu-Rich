@@ -1,8 +1,11 @@
+"use client";
+
 import type React from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Share, Wifi, Trello, Target, Globe, Gift, ChevronRight, Play } from "lucide-react"
+import { signIn } from "next-auth/react"
 
 export default function Home() {
   return (
@@ -21,7 +24,8 @@ export default function Home() {
                 Ambatu-Rich is helping you to setting up the payroll without required any finance skills or knowledge
                 before
               </p>
-              <Button className="rounded-full bg-[#1f7cff] hover:bg-[#1f7cff]/90 text-white px-6">Get Started</Button>
+              <Button 
+              className="rounded-full bg-[#1f7cff] hover:bg-[#1f7cff]/90 text-white px-6">Get Started</Button>
             </div>
 
             <div className="md:w-1/2 relative">

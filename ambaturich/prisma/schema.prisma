@@ -22,12 +22,14 @@ model finance_report {
   user      user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model session {
-  sessionID      String    @id @db.VarChar
-  sessionToken   String?
-  userID         String?   @db.VarChar
-  sessionExpires DateTime? @db.Date
-  user           user?     @relation(fields: [userID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Session {
+  id            String   @id @default(cuid())
+  sessionToken  String   @unique
+  userId        String
+  expires       DateTime
+  user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "userId")
 }
 
 model struk_scanned {
@@ -40,12 +42,38 @@ model struk_scanned {
 }
 
 model user {
-  id                String              @id @default(dbgenerated("('USER_'::text || nextval('public.user_id'::regclass))")) @db.VarChar
+  id                String              @id @default(uuid())
   name              String?             @db.VarChar
+  username          String?             @unique @db.VarChar
   image             String?
   sessionID         String?             @db.VarChar
+  email             String             @unique
+  emailVerified     DateTime?
+  password          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   ai_recommendation ai_recommendation[]
   finance_report    finance_report[]
-  session           session[]
+  session           Session[]
   struk_scanned     struk_scanned[]
+  account           Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId], name: "accountId")
 }
