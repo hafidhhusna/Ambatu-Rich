@@ -24,7 +24,8 @@ const authOptions : NextAuthOptions = {
             if(!profile?.email){
                 throw new Error('No Profile')
             }
-
+            const profilePicture = (profile as any).picture
+            console.log(profile)
             await prisma.user.upsert({
                 where: {
                     email: profile.email,
@@ -32,9 +33,11 @@ const authOptions : NextAuthOptions = {
                 create:{
                     email: profile.email,
                     name: profile.name,
+                    image: profilePicture,
                 },
                 update:{
                     name:profile.name,
+                    image: profilePicture
                 },
             })
 
