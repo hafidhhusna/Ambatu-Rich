@@ -48,7 +48,7 @@ model user {
   image             String?
   sessionID         String?             @db.VarChar
   email             String             @unique
-  emailVerified     DateTime?
+  emailVerified     Boolean?
   password          String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
