@@ -25,6 +25,7 @@ const authOptions : NextAuthOptions = {
                 throw new Error('No Profile')
             }
             const profilePicture = (profile as any).picture
+            const email_verified = (profile as any).email_verified
             console.log(profile)
             await prisma.user.upsert({
                 where: {
@@ -34,10 +35,12 @@ const authOptions : NextAuthOptions = {
                     email: profile.email,
                     name: profile.name,
                     image: profilePicture,
+                    emailVerified: email_verified,
                 },
                 update:{
                     name:profile.name,
-                    image: profilePicture
+                    image: profilePicture,
+                    emailVerified: email_verified,
                 },
             })
 
