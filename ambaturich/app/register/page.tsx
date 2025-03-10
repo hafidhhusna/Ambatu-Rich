@@ -21,10 +21,6 @@ export default function RegisterForm() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-//   const [name, setName] = useState("");
-//   const [username, setUsername] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
