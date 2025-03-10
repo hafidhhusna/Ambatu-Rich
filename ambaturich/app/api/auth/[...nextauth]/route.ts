@@ -1,6 +1,6 @@
 // import { authOptions } from "@/lib/auth";
 import {session} from '@/lib/session';
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import GoogleProvider from 'next-auth/providers/google';
