@@ -19,48 +19,43 @@ const Navbar: React.FC = () => {
   const { data: session, status } = useSession();
   const isLoggedIn = status === 'authenticated';
 
+  if (pathname?.startsWith('/user')) {
+    return null;
+  }
+
   const getIconForPath = (path: string) => {
     switch (path) {
       case '/':
-        return <IconHome className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-500" />;
+        return <IconHome className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />;
       case '/about':
         return (
-          <IconInfoCircle className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-500" />
+          <IconInfoCircle className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />
         );
       case '/profile':
-        return <IconUser className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-500" />;
+        return <IconUser className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />;
       default:
         return (
-          <IconBuildingStore className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-500" />
+          <IconBuildingStore className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />
         );
     }
   };
 
-  const navItems = navbar_list.map((item) => ({
-    name: item.menu,
-    link: item.path,
-    icon: getIconForPath(item.path),
-  }));
-
-  const handleLogout = async () => {
-    try {
-      await signOut({ redirect: false });
-      toast.success('Logged out successfully');
-      router.push('/auth/signin');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      toast.error('Failed to log out');
-    }
+  const handleDashboardClick = () => {
+    router.push('/user');
   };
 
   return (
     <>
       <FloatingNav
-        navItems={navItems}
+        navItems={navbar_list.map((item) => ({
+          ...item,
+          icon: getIconForPath(item.path),
+        }))}
         isLoggedIn={isLoggedIn}
-        onLogout={handleLogout}
+        onDashboard={handleDashboardClick}
+        showDashboard={isLoggedIn}
       />
-      <div className="h-12"></div>
+      <div className="h-14 sm:h-12"></div>
     </>
   );
 };
