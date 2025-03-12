@@ -1,8 +1,17 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const Footer: React.FC = () => {
+  const pathname = usePathname();
+
+  // Don't render footer on user pages
+  if (pathname?.startsWith('/user')) {
+    return null;
+  }
+
   return (
     <footer className="container mx-auto px-4 py-8 border-t border-gray-200 dark:border-gray-800">
       <div className="md:flex md:justify-between md:items-center">
