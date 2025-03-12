@@ -36,7 +36,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
             storageKey="ambatu-theme"
           >
             <Navbar />
-            <main className="md:py-[100px]">{children}</main>
+            <main className="">{children}</main>
             <Footer />
           </ThemeProvider>
           <Toaster richColors position="top-center" />
