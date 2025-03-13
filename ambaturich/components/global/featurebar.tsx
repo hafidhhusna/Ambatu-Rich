@@ -38,7 +38,7 @@ export function FeatureSidebar() {
                             <DashboardIcon color={pathname === '/dashboard' ? 'blue' : 'gray'} /> Dashboard
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/analysis')}`}>
-                            <AnalysisIcon color={pathname === '/analysis' ? 'blue' : 'gray'} /> Analysis
+                            <AnalysisIcon color={pathname === '/analysis' ? 'blue' : 'gray'} /> Analytics
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/planner')}`}>
                             <PlannerIcon color={pathname === '/planner' ? 'blue' : 'gray'} /> Planner
