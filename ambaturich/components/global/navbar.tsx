@@ -1,46 +1,62 @@
-"use client";
+'use client';
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { signIn } from 'next-auth/react';
-import { getUserSession } from '@/lib/session';
-
-type Props = {};
-
-const handleGoogleSignIn = async (props: Props) => {
-  const session = await signIn('google' ,{callbackUrl: '/home'});
-}
+import { navbar_list } from '@/metadata/navbar_list';
+import { usePathname, useRouter } from 'next/navigation';
+import { FloatingNav } from '@/components/ui/floating-navbar';
+import {
+  IconHome,
+  IconUser,
+  IconInfoCircle,
+  IconBuildingStore,
+} from '@tabler/icons-react';
+import { useSession, signOut } from 'next-auth/react';
+import { toast } from 'sonner';
 
 const Navbar: React.FC = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === 'authenticated';
+
+  if (pathname?.startsWith('/user')) {
+    return null;
+  }
+
+  const getIconForPath = (path: string) => {
+    switch (path) {
+      case '/':
+        return <IconHome className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />;
+      case '/about':
+        return (
+          <IconInfoCircle className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />
+        );
+      case '/profile':
+        return <IconUser className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />;
+      default:
+        return (
+          <IconBuildingStore className="h-5 w-5 sm:h-4 sm:w-4 text-neutral-500" />
+        );
+    }
+  };
+
+  const handleDashboardClick = () => {
+    router.push('/user');
+  };
+
   return (
-    <header className="container mx-auto px-4 py-6 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <div className="flex gap-1">
-          <div className="w-2 h-2 rounded-full bg-[#1f7cff]"></div>
-          <div className="w-2 h-2 rounded-full bg-[#1f7cff]"></div>
-        </div>
-        <span className="font-semibold text-[#070f18]">Ambatu-Rich</span>
-      </div>
-
-      <nav className="hidden md:flex items-center gap-8">
-        <a href="#" className="text-sm font-medium text-[#070f18]">
-          Home
-        </a>
-        <a href="#" className="text-sm font-medium text-gray-600">
-          Features
-        </a>
-        <a href="#" className="text-sm font-medium text-gray-600">
-          About Us
-        </a>
-      </nav>
-
-      <Button className="hidden md:flex rounded-full bg-gray-200 hover:bg-gray-300 text-[#070f18] px-6"
-      onClick={() => {
-        handleGoogleSignIn({});
-      }}>
-        Sign In
-      </Button>
-    </header>
+    <>
+      <FloatingNav
+        navItems={navbar_list.map((item) => ({
+          ...item,
+          icon: getIconForPath(item.path),
+        }))}
+        isLoggedIn={isLoggedIn}
+        onDashboard={handleDashboardClick}
+        showDashboard={isLoggedIn}
+      />
+      <div className="h-14 sm:h-12"></div>
+    </>
   );
 };
 

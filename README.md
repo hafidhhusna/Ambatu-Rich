@@ -10,20 +10,16 @@
 
 <br>
 <p align="center">
- <p align="center">Ambatu-Rich adalah Web untuk mengatur finansialmu. AmbatuRich membantu kamu untuk mengatur keuanganmu dengan baik dan menghemat uangmu.</p>
+ <p align="center">AmbatuRich adalah Web untuk mengatur finansialmu. AmbatuRich membantu kamu untuk mengatur keuanganmu dengan baik dan menghemat uangmu.</p>
 </p>
 
 ## Features
 
-1. Upload budgeting report
-
-2. Analisis Keuangan
-
-3. Export to Excel
-
-4. Budget Planner
-
-5. Budgeting report
+1. Upload budgeting report <br>
+2. Analisis Keuangan <br>
+3. Export to Excel <br>
+4. Budget Planner <br>
+5. Budgeting report <br>
 
 <br>
 <p align="center">
