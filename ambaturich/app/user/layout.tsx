@@ -28,10 +28,22 @@ export default function UserLayout({
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <UserSidebar />
+      {/* Desktop sidebar */}
+      <div className="fixed inset-y-0 left-0 z-40 hidden md:block">
+        <UserSidebar />
+      </div>
 
-      <div className="flex-1 pt-0 md:pt-4">
-        <main className="container px-4 py-4 md:py-6">{children}</main>
+      {/* Content area */}
+      <div className="flex flex-col flex-grow min-h-screen">
+        {/* Mobile sidebar/header - only shown on mobile */}
+        <div className="block md:hidden">
+          <UserSidebar />
+        </div>
+
+        {/* Main content with proper margin on desktop only */}
+        <div className="flex-1 ml-0 md:ml-64">
+          <main className="container px-4 py-4 md:py-6">{children}</main>
+        </div>
       </div>
     </div>
   );
