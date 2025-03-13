@@ -12,11 +12,21 @@ import {
 } from '@/components/ui/card';
 import { IconUsers, IconHeart, IconActivity } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
+import { ExpenseTable, Expense } from '@/components/expense-table';
 
 const planItems = [
   { id: 1, title: 'Lorem Ipsum Dolor Sit Amet', progress: 70 },
   { id: 2, title: 'Lorem Ipsum Dolor Sit Amet', progress: 50 },
   { id: 3, title: 'Lorem Ipsum Dolor Sit Amet', progress: 40 },
+];
+
+// DUMMY DATA
+const sampleExpenses: Expense[] = [
+  { id: 'EXP001', type: 'Food', amount: 75000, date: '2025-03-10' },
+  { id: 'EXP002', type: 'Transportation', amount: 50000, date: '2025-03-08' },
+  { id: 'EXP003', type: 'Entertainment', amount: 150000, date: '2025-03-05' },
+  { id: 'EXP004', type: 'Utilities', amount: 250000, date: '2025-03-01' },
+  { id: 'EXP005', type: 'Shopping', amount: 400000, date: '2025-02-28' },
 ];
 
 export default function UserPage() {
@@ -42,7 +52,7 @@ export default function UserPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="bg-indigo-900 p-8 text-white relative overflow-hidden rounded-xl">
+      <div className="bg-indigo-900 p-8 text-white relative overflow-hidden rounded-xl mx-4">
         <div className="relative z-10">
           <p className="text-sm">
             Welcome back, {session?.user?.name || 'USER'}
@@ -64,7 +74,7 @@ export default function UserPage() {
       </div>
 
       {/* Plan Section */}
-      <div className="p-6">
+      <div className="px-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Your Plan</h2>
           <div className="flex gap-2"></div>
@@ -95,81 +105,16 @@ export default function UserPage() {
         </div>
       </div>
 
-      {/* Stats cards - 1 column on mobile, 2 on md, 3 on lg
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <IconUsers className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No orders yet</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Favorites</CardTitle>
-            <IconHeart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No favorites yet</p>
-          </CardContent>
-        </Card>
-        <Card className="md:col-span-2 lg:col-span-1">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Account Status
-            </CardTitle>
-            <IconActivity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Active</div>
-            <p className="text-xs text-muted-foreground">
-              Member since {new Date().toLocaleDateString()}
-            </p>
-          </CardContent>
-        </Card>
+      {/* History data */}
+      <div className="mt-8 px-4">
+        <ExpenseTable
+          expenses={sampleExpenses}
+          title="Expense History"
+          description="Your recent expense transactions"
+        />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Your recent actions on Ambatu-Rich
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <p>No recent activity to display</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Information</CardTitle>
-            <CardDescription>Your personal information</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                <div className="text-sm font-medium">Name</div>
-                <div className="text-sm break-words">
-                  {session?.user?.name || 'Not provided'}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                <div className="text-sm font-medium">Email</div>
-                <div className="text-sm break-words">
-                  {session?.user?.email}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
+      {/* Stats cards and other components commented out */}
     </div>
   );
 }
