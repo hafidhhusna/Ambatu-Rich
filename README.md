@@ -15,15 +15,11 @@
 
 ## Features
 
-1. Upload budgeting report
-
-2. Analisis Keuangan
-
-3. Export to Excel
-
-4. Budget Planner
-
-5. Budgeting report
+1. Upload budgeting report <br>
+2. Analisis Keuangan <br>
+3. Export to Excel <br>
+4. Budget Planner <br>
+5. Budgeting report <br>
 
 <br>
 <p align="center">
