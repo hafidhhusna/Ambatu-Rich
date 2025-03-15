@@ -10,21 +10,21 @@ export default function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { status } = useSession();
+  // const { status } = useSession();
 
-  // Authentication check - redirect if not authenticated
-  if (status === 'unauthenticated') {
-    redirect('/auth/signin');
-  }
+  // // Authentication check - redirect if not authenticated
+  // if (status === 'unauthenticated') {
+  //   redirect('/auth/signin');
+  // }
 
-  // Show loading state
-  if (status === 'loading') {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  // // Show loading state
+  // if (status === 'loading') {
+  //   return (
+  //     <div className="flex min-h-screen items-center justify-center">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">

@@ -20,20 +20,20 @@ const planItems = [
 ];
 
 export default function UserPage() {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
-  if (status === 'unauthenticated') {
-    redirect('/auth/signin');
-  }
+  // if (status === 'unauthenticated') {
+  //   redirect('/auth/signin');
+  // }
 
   // Show loading state
-  if (status === 'loading') {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  // if (status === 'loading') {
+  //   return (
+  //     <div className="flex min-h-screen items-center justify-center">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-6">
@@ -45,7 +45,7 @@ export default function UserPage() {
       <div className="bg-indigo-900 p-8 text-white relative overflow-hidden rounded-xl">
         <div className="relative z-10">
           <p className="text-sm">
-            Welcome back, {session?.user?.name || 'USER'}
+            {/* Welcome back, {session?.user?.name || 'USER'} */}
           </p>
           <h1 className="text-3xl font-bold mt-1">
             Lorem Ipsum Dolor Sit Amet
