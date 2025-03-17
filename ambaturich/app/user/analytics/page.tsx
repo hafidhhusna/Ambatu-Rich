@@ -3,19 +3,17 @@
 import Link from 'next/link';
 import React, { useEffect, useRef } from 'react';
 import { FeatureSidebar } from '@/components/global/featurebar';
-import { AnalysisHeader } from '@/components/analysisComponent/AnalysisHeader';
 import { ExpenseChart } from '@/components/analysisComponent/ExpenseChart';
 import { ImprovementCard } from '@/components/analysisComponent/ImprovementCard';
 import { ReportQuery } from '@/components/analysisComponent/ReportQuery';
 
 const UserProfile: React.FC = () => {
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-
-      <div className="flex-1 p-6 md:p-10">
-        {/* Page Header */}
-        <AnalysisHeader />
-
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Analytic</h2>
+      </div>
+      <div className="flex-1">
         {/* Main Content */}
         <div className="flex flex-col gap-6 mt-6">
           <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow w-full flex justify-center">
@@ -26,7 +24,6 @@ const UserProfile: React.FC = () => {
             <ReportQuery />
           </div>
         </div>
-        
       </div>
     </div>
   );
