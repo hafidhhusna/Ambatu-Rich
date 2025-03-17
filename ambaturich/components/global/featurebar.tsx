@@ -16,7 +16,7 @@ export function FeatureSidebar() {
 
     // Function to check if the menu item is active
     const isActive = (path: string) =>
-        pathname === path ? 'text-blue-600 bg-gray-200 dark:bg-gray-700' : 'text-gray-700 dark:text-gray-300';
+        pathname.startsWith(`/function${path}`) ? 'text-blue-600 bg-gray-200 dark:bg-gray-700' : 'text-gray-700 dark:text-gray-300';
 
     return (
         <div className="w-64 min-h-screen bg-white dark:bg-gray-800 shadow-md p-4 flex flex-col justify-between">
@@ -35,22 +35,22 @@ export function FeatureSidebar() {
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Manage</p>
                     <ul className="space-y-4">
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/dashboard')}`}>
-                            <DashboardIcon color={pathname === '/dashboard' ? 'blue' : 'gray'} /> Dashboard
+                            <DashboardIcon color={pathname.startsWith('/function/dashboard') ? 'blue' : 'gray'} /> Dashboard
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/analysis')}`}>
-                            <AnalysisIcon color={pathname === '/analysis' ? 'blue' : 'gray'} /> Analytics
+                            <AnalysisIcon color={pathname.startsWith('/function/analytics') ? 'blue' : 'gray'} /> Analytics
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/planner')}`}>
-                            <PlannerIcon color={pathname === '/planner' ? 'blue' : 'gray'} /> Planner
+                            <PlannerIcon color={pathname.startsWith('/function/planner') ? 'blue' : 'gray'} /> Planner
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/calendar')}`}>
-                            <CalendarIcon color={pathname === '/calendar' ? 'blue' : 'gray'} /> Calendar
+                            <CalendarIcon color={pathname.startsWith('/function/calendar') ? 'blue' : 'gray'} /> Calendar
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/notifications')}`}>
-                            <NotificationsIcon color={pathname === '/notifications' ? 'blue' : 'gray'} /> Notifications
+                            <NotificationsIcon color={pathname.startsWith('/function/notifications') ? 'blue' : 'gray'} /> Notifications
                         </li>
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/security')}`}>
-                            <SecurityIcon color={pathname === '/security' ? 'blue' : 'gray'} /> Security
+                            <SecurityIcon color={pathname.startsWith('/function/security') ? 'blue' : 'gray'} /> Security
                         </li>
                     </ul>
 
@@ -58,7 +58,7 @@ export function FeatureSidebar() {
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mt-6 mb-2">Preferences</p>
                     <ul className="space-y-6">
                         <li className={`font-medium flex items-center gap-3 cursor-pointer p-2 rounded-md hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive('/setting')}`}>
-                            <SettingIcon color={pathname === '/setting' ? 'blue' : 'gray'} /> Setting
+                            <SettingIcon color={pathname.startsWith('/function/setting') ? 'blue' : 'gray'} /> Setting
                         </li>
                     </ul>
                 </nav>

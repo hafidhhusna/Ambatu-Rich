@@ -19,17 +19,15 @@ export default function AnalysisPage() {
 
           {/* Main Content */}
           <div className="flex flex-col gap-6 mt-6">
-            {/* Expense Chart - Centered with legend */}
             <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow w-full flex justify-center">
               <ExpenseChart />
             </div>
-
-            {/* Two Cards under the Doughnut Chart */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
               <ImprovementCard />
               <ReportQuery />
             </div>
           </div>
+          
         </div>
       </div>
   );

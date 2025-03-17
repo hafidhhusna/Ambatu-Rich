@@ -11,23 +11,22 @@ import { ReportQuery } from '@/components/analysisComponent/ReportQuery';
 const UserProfile: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar */}
-      {/* <FeatureSidebar /> */}
 
-      <div className="flex-1 p-6 md:p-10 space-y-6">
+      <div className="flex-1 p-6 md:p-10">
         {/* Page Header */}
         <AnalysisHeader />
 
-        {/* Expense Chart Section - Use correct spacing & width */}
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow w-full flex justify-center">
-          <ExpenseChart />
+        {/* Main Content */}
+        <div className="flex flex-col gap-6 mt-6">
+          <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow w-full flex justify-center">
+            <ExpenseChart />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+            <ImprovementCard />
+            <ReportQuery />
+          </div>
         </div>
-
-        {/* Two Cards under the Doughnut Chart - Use full width */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-          <ImprovementCard />
-          <ReportQuery />
-        </div>
+        
       </div>
     </div>
   );
