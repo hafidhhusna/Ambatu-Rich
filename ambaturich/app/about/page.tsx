@@ -3,7 +3,7 @@
 import type React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import nig from '/public/images/home.png';
+import nig from '/public/images/home.png'; //nig??
 
 export default function AboutUs() {
   return (
