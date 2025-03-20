@@ -40,6 +40,11 @@ export const sidebar_list: NavbarProps[] = [
     icon: <IconAnalyze className="h-4 w-4 mr-2" />
   },
   {
+    menu: "Planner",
+    path: "/user/planner",
+    icon: <IconUser className="h-4 w-4 mr-2" />
+  },
+  {
     menu: "Notification",
     path: "/user/notification",
     icon: <IconNotification className="h-4 w-4 mr-2" />
