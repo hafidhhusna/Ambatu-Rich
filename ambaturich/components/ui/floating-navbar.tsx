@@ -83,7 +83,7 @@ export const FloatingNav = ({
 
         {/* Right section: Theme toggle and Sign in/Dashboard */}
         <div className="ml-3 flex items-center space-x-2">
-          <ThemeToggle />
+          <ThemeToggle mode="toggle"/>
 
           {showDashboard ? (
             <Button

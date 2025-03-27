@@ -87,14 +87,13 @@ export default function SettingsPage() {
 
   const handleLogout = async () => {
     try {
+      toast.success('Logging out...');
+
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
       await signOut({
-        redirect: false,
         callbackUrl: '/auth/signin',
       });
-      toast.success('Logged out successfully');
-      setTimeout(() => {
-        router.push('/auth/signin');
-      }, 100);
     } catch (error) {
       console.error('Logout failed:', error);
       toast.error('Failed to log out');
@@ -104,10 +103,6 @@ export default function SettingsPage() {
   // Handle form submission
   async function onSubmit(values: z.infer<typeof profileFormSchema>) {
     try {
-      // In a real application, you would update the user profile here
-      console.log('Profile update values:', values);
-
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Update session if needed
@@ -299,7 +294,7 @@ export default function SettingsPage() {
                   Toggle between light and dark mode
                 </p>
               </div>
-              <ThemeToggle />
+              <ThemeToggle mode="select" />
             </div>
           </CardContent>
         </Card>
