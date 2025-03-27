@@ -55,7 +55,6 @@ export default function UserPage() {
       <div className="bg-indigo-900 p-8 text-white relative overflow-hidden rounded-xl mx-4">
         <div className="relative z-10">
           <p className="text-sm">
-            {/* Welcome back, {session?.user?.name || 'USER'} */}
           </p>
           <h1 className="text-3xl font-bold mt-1">
             Lorem Ipsum Dolor Sit Amet
