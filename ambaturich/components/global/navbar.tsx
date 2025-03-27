@@ -11,7 +11,6 @@ import {
   IconBuildingStore,
 } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
-import { toast } from 'sonner';
 
 const Navbar: React.FC = () => {
   const router = useRouter();
