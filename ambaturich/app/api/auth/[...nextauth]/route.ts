@@ -124,7 +124,7 @@ const handler = NextAuth({
     },
   },
   // Add this to debug any issues with NextAuth
-  debug: process.env.NODE_ENV === 'development',
+  debug: false,
 });
 
 export { handler as GET, handler as POST };
