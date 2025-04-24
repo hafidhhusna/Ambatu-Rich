@@ -15,9 +15,9 @@ import { Button } from '@/components/ui/button';
 import { ExpenseTable, Expense } from '@/components/expense-table';
 
 const planItems = [
-  { id: 1, title: 'Lorem Ipsum Dolor Sit Amet', progress: 70 },
-  { id: 2, title: 'Lorem Ipsum Dolor Sit Amet', progress: 50 },
-  { id: 3, title: 'Lorem Ipsum Dolor Sit Amet', progress: 40 },
+  { id: 1, title: 'Lorem Ipsum Dolor Sit Amet Suki 1', progress: 70 },
+  { id: 2, title: 'Lorem Ipsum Dolor Sit Amet Suki 2', progress: 50 },
+  { id: 3, title: 'Lorem Ipsum Dolor Sit Amet Suki 3', progress: 40 },
 ];
 
 // DUMMY DATA

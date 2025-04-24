@@ -4,12 +4,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL2")
+  url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model ai_recommendation {
-  id             String    @id @default(dbgenerated("('RECOMMENDATION_'::text || nextval('public.ai_recommendation_id'::regclass))")) @db.VarChar
+  id             String    @id @default(cuid()) @db.VarChar
   recommendation String?
   createdAt      DateTime? @db.Date
   user_id        String?   @db.VarChar
@@ -17,7 +17,7 @@ model ai_recommendation {
 }
 
 model finance_report {
-  id        String    @id @default(dbgenerated("('FINANCE_REPORT_'::text || nextval('public.report_id'::regclass))")) @db.VarChar
+  id        String    @id @default(cuid()) @db.VarChar
   createdAt DateTime? @db.Date
   user_id   String?   @db.VarChar
   user      user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -34,7 +34,7 @@ model Session {
 }
 
 model struk_scanned {
-  id             String    @id @default(dbgenerated("('STRUK_'::text || nextval('public.struk_id'::regclass))")) @db.VarChar
+  id             String    @id @default(cuid()) @db.VarChar
   image_url      String?
   extracted_text String?
   uploadedAt     DateTime? @db.Date
