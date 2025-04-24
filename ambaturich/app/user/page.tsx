@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import {
@@ -21,15 +21,36 @@ const planItems = [
 ];
 
 // DUMMY DATA
-const sampleExpenses: Expense[] = [
-  { id: 'EXP001', type: 'Food', amount: 75000, date: '2025-03-10' },
-  { id: 'EXP002', type: 'Transportation', amount: 50000, date: '2025-03-08' },
-  { id: 'EXP003', type: 'Entertainment', amount: 150000, date: '2025-03-05' },
-  { id: 'EXP004', type: 'Utilities', amount: 250000, date: '2025-03-01' },
-  { id: 'EXP005', type: 'Shopping', amount: 400000, date: '2025-02-28' },
-];
 
 export default function UserPage() {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const sampleExpenses = async () =>{
+      try{
+        const res = await fetch("api/struk");
+        if(!res.ok){
+          throw new Error("Error Fetching Data");
+        }
+        const data = await res.json();
+        const formattedData = data.map((item : any) => ({
+          id : item.id,
+          type : item.type,
+          amount : item.amount,
+          date : item.uploadedAt,
+        }))
+        setExpenses(formattedData);
+      } catch(error : any){
+        setError(error.message || "Terjadi Kesalahan")
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    sampleExpenses();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -92,13 +113,18 @@ export default function UserPage() {
 
       {/* History data */}
       <div className="mt-8 px-4">
-        <ExpenseTable
-          expenses={sampleExpenses}
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p className='text-red-500'>{error}</p>
+        ) : (
+          <ExpenseTable
+          expenses={expenses}
           title="Expense History"
           description="Your recent expense transactions"
         />
+        )}
       </div>
-
     </div>
   );
 }
