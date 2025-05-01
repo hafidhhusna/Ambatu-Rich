@@ -28,22 +28,22 @@ export default function UserPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const sampleExpenses = async () =>{
-      try{
-        const res = await fetch("api/struk");
-        if(!res.ok){
-          throw new Error("Error Fetching Data");
+    const sampleExpenses = async () => {
+      try {
+        const res = await fetch('api/struk');
+        if (!res.ok) {
+          throw new Error('Error Fetching Data');
         }
         const data = await res.json();
-        const formattedData = data.map((item : any) => ({
-          id : item.id,
-          type : item.type,
-          amount : item.amount,
-          date : item.uploadedAt,
-        }))
+        const formattedData = data.map((item: any) => ({
+          id: item.id,
+          type: item.type,
+          amount: item.amount,
+          date: item.uploadedAt,
+        }));
         setExpenses(formattedData);
-      } catch(error : any){
-        setError(error.message || "Terjadi Kesalahan")
+      } catch (error: any) {
+        setError(error.message || 'Terjadi Kesalahan');
       } finally {
         setLoading(false);
       }
@@ -61,8 +61,7 @@ export default function UserPage() {
       {/* Hero Section */}
       <div className="bg-indigo-900 p-8 text-white relative overflow-hidden rounded-xl mx-4">
         <div className="relative z-10">
-          <p className="text-sm">
-          </p>
+          <p className="text-sm"></p>
           <h1 className="text-3xl font-bold mt-1">
             Lorem Ipsum Dolor Sit Amet
           </h1>
@@ -113,16 +112,28 @@ export default function UserPage() {
 
       {/* History data */}
       <div className="mt-8 px-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Expense History</h2>
+          <Button
+            onClick={() => (window.location.href = '/user/upload')}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <IconActivity size={16} />
+            Add Expense
+          </Button>
+        </div>
+
         {loading ? (
           <p>Loading...</p>
         ) : error ? (
-          <p className='text-red-500'>{error}</p>
+          <p className="text-red-500">{error}</p>
         ) : (
           <ExpenseTable
-          expenses={expenses}
-          title="Expense History"
-          description="Your recent expense transactions"
-        />
+            expenses={expenses}
+            title="Expense History"
+            description="Your recent expense transactions"
+          />
         )}
       </div>
     </div>
