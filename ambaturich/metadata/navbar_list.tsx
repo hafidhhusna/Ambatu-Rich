@@ -52,8 +52,13 @@ export const sidebar_list: NavbarProps[] = [
     icon: BarChart4,
   },
   {
+    menu: 'Upload Struct',
+    path: '/user/upload',
+    icon: Store,
+  },
+  {
     menu: 'Settings',
     path: '/user/setting',
     icon: Settings,
-  },
+  }
 ];
