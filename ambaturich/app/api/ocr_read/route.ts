@@ -1,16 +1,24 @@
-import openai from "@/lib/openai";
+import { NextRequest, NextResponse } from 'next/server';
+import openai from '@/lib/openai';
+import { cleanOCRText } from '@/lib/cleanOCR';
 
-async function main() {
-  const completion = await openai.chat.completions.create({
-    model: "openai/gpt-4o-search-preview",
-    messages: [
-      {
-        "role": "user",
-        "content": "What is the meaning of life?"
-      }
-    ],
-    
-  });
+export async function POST(req: NextRequest) {
+  try {
+    const { ocrText } = await req.json();
+    const { prompt } = cleanOCRText(ocrText);
 
-  console.log(completion.choices[0].message);
+    const completion = await openai.chat.completions.create({
+      model: 'chatgpt-4o-latest',
+      messages: [
+        { role: 'system', content: 'Kamu adalah asisten keuangan yang cerdas dan teliti.' },
+        { role: 'user', content: `Berikut daftar transaksi saya:\n${prompt}\n\nTolong beri saran keuangan.` },
+      ],
+    });
+
+    const reply = completion.choices[0].message.content;
+    return NextResponse.json({ result: reply });
+  } catch (error) {
+    console.error("API error:", error);
+    return NextResponse.json({ error: 'Terjadi kesalahan di server.' }, { status: 500 });
+  }
 }
