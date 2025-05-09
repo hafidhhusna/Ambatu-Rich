@@ -1,16 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import openai from '@/lib/openai';
 import { cleanOCRText } from '@/lib/cleanOCR';
+import { prisma } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
-    const { ocrText } = await req.json(); // ✅ pastikan destructuring benar
+    const { id } = await req.json(); // pastikan destructuring benar
 
-    if (typeof ocrText !== 'string') {
-      return NextResponse.json({ error: 'ocrText harus berupa string' }, { status: 400 });
+    if(!id){
+      return NextResponse.json({error : 'ID transaksi diperlukan'}, {status : 400});
     }
 
-    const { prompt, cleanAIResponse, getSummary } = cleanOCRText(ocrText); // ✅ sekarang inputnya string, aman
+    const record = await prisma.struk_scanned.findUnique({
+      where:{id},
+    });
+
+    if(!record){
+      return NextResponse.json({error : 'Transaksi Tidak Ditemukan'}, {status : 404});
+    };
+
+    const {prompt, cleanAIResponse} = cleanOCRText(record.extracted_text || '');
 
     const completion = await openai.chat.completions.create({
       model: 'deepseek/deepseek-prover-v2:free',
