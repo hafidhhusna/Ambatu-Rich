@@ -32,7 +32,7 @@ export async function POST(req : NextRequest){
 
         console.log('Data struk : ', savedRecord);
 
-        return NextResponse.json({success : true , data: savedRecord});
+        return NextResponse.json({success : true , id : savedRecord.id});
     } catch(error){
         console.error('Error Processing OCR : ', error);
         return NextResponse.json(

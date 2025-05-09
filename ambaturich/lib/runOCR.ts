@@ -6,7 +6,7 @@ export async function runOCR(imageUrl: string): Promise<string>{
 
         const response = await axios.get(imageUrl, {responseType : 'arraybuffer'});
         const imageBuffer = Buffer.from(response.data, 'binary');
-        const {data} = await Tesseract.recognize(imageUrl, 'eng+ind', {
+        const {data} = await Tesseract.recognize(imageBuffer, 'eng+ind', {
             logger: m=> console.log(m),
         });
 
