@@ -10,7 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { IconUsers, IconHeart, IconActivity } from '@tabler/icons-react';
+import {
+  IconUsers,
+  IconHeart,
+  IconActivity,
+  IconArrowRight,
+  IconCalendar,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { ExpenseTable, Expense } from '@/components/expense-table';
 
@@ -53,89 +59,130 @@ export default function UserPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-8 max-w-7xl mx-auto py-6 px-6 md:px-0 w-full">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
+        <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
+          May 2025
+        </div>
       </div>
 
       {/* Hero Section */}
-      <div className="bg-indigo-900 p-8 text-white relative overflow-hidden rounded-xl mx-4">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 p-8 text-white relative overflow-hidden rounded-xl">
         <div className="relative z-10">
-          <p className="text-sm"></p>
+          <p className="text-sm text-white/80">Welcome to Ambatu Rich</p>
           <h1 className="text-3xl font-bold mt-1">
             Lorem Ipsum Dolor Sit Amet
           </h1>
 
-          <Button className="mt-6 bg-white text-indigo-900 hover:bg-white/90 rounded-full">
+          <Button className="mt-6 bg-white text-blue-700 hover:bg-white/90 rounded-full">
             Join Now
           </Button>
         </div>
 
         {/* Decorative elements */}
         <div className="absolute right-0 top-0 bottom-0 w-1/3 flex items-center justify-center">
-          <div className="w-64 h-64 rounded-full bg-indigo-800/30 absolute"></div>
-          <div className="w-32 h-32 rounded-full bg-indigo-700/30 absolute -bottom-10 right-10"></div>
+          <div className="w-64 h-64 rounded-full bg-white/10 absolute"></div>
+          <div className="w-32 h-32 rounded-full bg-white/10 absolute -bottom-10 right-10"></div>
         </div>
       </div>
 
       {/* Plan Section */}
-      <div className="px-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Your Plan</h2>
-          <div className="flex gap-2"></div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {planItems.map((item) => (
-            <Card key={item.id} className="relative group overflow-hidden">
-              <div className="h-40 bg-gray-900 flex items-center justify-center">
-                <div className="text-gray-600 text-xs">Belum ada bang</div>
-              </div>
-              <CardContent className="p-4">
-                <div className="flex items-center mb-2">
-                  <div className="h-5 w-5 rounded bg-indigo-200 text-xs flex items-center justify-center text-indigo-600 mr-2">
-                    AI
+      <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden w-full">
+        <CardHeader className="bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
+          <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
+            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+              <IconCalendar
+                className="text-blue-600 dark:text-blue-400"
+                size={16}
+              />
+            </div>
+            Your Plan
+          </CardTitle>
+          <CardDescription>
+            Track your financial planning progress
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6 bg-white dark:bg-gray-900">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {planItems.map((item) => (
+              <Card
+                key={item.id}
+                className="relative group overflow-hidden border-blue-100 dark:border-blue-900 hover:border-blue-200 dark:hover:border-blue-800 transition-colors"
+              >
+                <div className="h-40 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center">
+                  <div className="text-blue-400 dark:text-blue-500 text-sm">
+                    No Data Yet
                   </div>
-                  <p className="font-medium">{item.title}</p>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                  <div
-                    className="bg-indigo-600 h-1.5 rounded-full"
-                    style={{ width: `${item.progress}%` }}
-                  ></div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+                <CardContent className="p-4">
+                  <div className="flex items-center mb-2">
+                    <div className="h-6 w-6 rounded-full bg-blue-100 text-xs flex items-center justify-center text-blue-600 dark:bg-blue-900 dark:text-blue-400 mr-2">
+                      AI
+                    </div>
+                    <p className="font-medium text-blue-800 dark:text-blue-300">
+                      {item.title}
+                    </p>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-2">
+                    <div
+                      className="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full"
+                      style={{ width: `${item.progress}%` }}
+                    ></div>
+                  </div>
+                  <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    Progress: {item.progress}%
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* History data */}
-      <div className="mt-8 px-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Expense History</h2>
-          <Button
-            onClick={() => (window.location.href = '/user/upload')}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <IconActivity size={16} />
-            Add Expense
-          </Button>
-        </div>
-
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <ExpenseTable
-            expenses={expenses}
-            title="Expense History"
-            description="Your recent expense transactions"
-          />
-        )}
-      </div>
+      {/* Expense History */}
+      <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden w-full">
+        <CardHeader className="bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+                <IconActivity
+                  className="text-blue-600 dark:text-blue-400"
+                  size={16}
+                />
+              </div>
+              <div>
+                <CardTitle className="text-blue-800 dark:text-blue-300 text-lg">
+                  Expense History
+                </CardTitle>
+                <CardDescription>
+                  Your recent expense transactions
+                </CardDescription>
+              </div>
+            </div>
+            <Button
+              onClick={() => (window.location.href = '/user/upload')}
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+            >
+              Add Expense
+              <IconArrowRight size={16} />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6 bg-white dark:bg-gray-900">
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+            </div>
+          ) : error ? (
+            <div className="text-red-500 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              {error}
+            </div>
+          ) : (
+            <ExpenseTable expenses={expenses} title="" description="" />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
