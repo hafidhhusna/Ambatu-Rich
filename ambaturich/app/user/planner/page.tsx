@@ -2,62 +2,122 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { IconCalendar, IconChartBar } from '@tabler/icons-react';
 
 const planItems = [
-    { id: 1, title: 'Lorem Ipsum Dolor Sit Amet', progress: 70 },
-    { id: 2, title: 'Lorem Ipsum Dolor Sit Amet', progress: 50 },
-    { id: 3, title: 'Lorem Ipsum Dolor Sit Amet', progress: 40 },
-    { id: 4, title: 'Lorem Ipsum Dolor Sit Amet', progress: 60 },
-    { id: 5, title: 'Lorem Ipsum Dolor Sit Amet', progress: 80 },
-    { id: 6, title: 'Lorem Ipsum Dolor Sit Amet', progress: 90 },
+  { id: 1, title: 'Lorem Ipsum Dolor Sit Amet', progress: 70 },
+  { id: 2, title: 'Lorem Ipsum Dolor Sit Amet', progress: 50 },
+  { id: 3, title: 'Lorem Ipsum Dolor Sit Amet', progress: 40 },
+  { id: 4, title: 'Lorem Ipsum Dolor Sit Amet', progress: 60 },
+  { id: 5, title: 'Lorem Ipsum Dolor Sit Amet', progress: 80 },
+  { id: 6, title: 'Lorem Ipsum Dolor Sit Amet', progress: 90 },
 ];
 
 const UserProfile: React.FC = () => {
-    return (
-        <div className="space-y-6">
-            {/* Title */}
-            <h2 className="text-2xl font-bold tracking-tight">AI Planner</h2>
-
-            {/* Two Feature Cards */}
-            <div className="space-y-4">
-                {["Plan This Month", "Plan Ahead"].map((label, index) => (
-                    <Card key={index} className="bg-blue-50 dark:bg-gray-800 flex items-center p-4">
-                        <div className="w-16 h-16 bg-gray-300 dark:bg-gray-600 rounded-lg mr-4"></div>
-                        <div className="flex-1">
-                            <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100">
-                                {index === 0 ? "How to Improve This Month Expenses" : "How to Improve Future Expenses"}
-                            </h3>
-                            <Button className="mt-2 bg-blue-600 text-white dark:bg-blue-500 dark:text-white">{label}</Button>
-                        </div>
-                    </Card>
-                ))}
-            </div>
-
-            {/* Your Plan Section */}
-            <div>
-                <h2 className="text-2xl font-bold tracking-tight">Current Plan</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                    {planItems.map((item) => (
-                        <Card key={item.id} className="relative group overflow-hidden">
-                            <div className="h-40 bg-gray-900 flex items-center justify-center">
-                                <div className="text-gray-600 text-xs">No Data Yet</div>
-                            </div>
-                            <CardContent className="p-4">
-                                <h4 className="font-medium">{item.title}</h4>
-                                <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                                    <div
-                                        className="bg-indigo-600 h-1.5 rounded-full"
-                                        style={{ width: `${item.progress}%` }}
-                                    ></div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            </div>
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto py-6 px-6 md:px-0 w-full">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-2xl font-bold tracking-tight">AI Planner</h2>
+        <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
+          May 2025
         </div>
-    );
+      </div>
+
+      {/* Overview Card */}
+      <Card className="border-blue-100 dark:border-blue-900 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 overflow-hidden shadow-lg w-full">
+        <CardHeader className="pb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-white/20 dark:bg-white/10 rounded-full">
+              <IconCalendar className="text-white" size={22} />
+            </div>
+            <div>
+              <CardTitle className="text-white text-xl">
+                Planning Overview
+              </CardTitle>
+              <CardDescription className="text-white/80 mt-1">
+                Organize your financial goals and track progress
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pb-6 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {['Plan This Month', 'Plan Ahead'].map((label, index) => (
+              <div key={index} className="bg-white/10 rounded-lg p-4">
+                <p className="text-white/70 text-sm mb-1">
+                  {index === 0 ? 'Current Month Planning' : 'Future Planning'}
+                </p>
+                <p className="text-white text-lg font-medium mb-2">
+                  {index === 0
+                    ? 'How to Improve This Month Expenses'
+                    : 'How to Improve Future Expenses'}
+                </p>
+                <Button className="mt-2 bg-white/20 hover:bg-white/30 text-white border-0">
+                  {label}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Your Plan Section */}
+      <div className="flex-1 w-full">
+        <div className="flex flex-col gap-8 mt-8 w-full">
+          <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden w-full">
+            <CardHeader className="bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
+              <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
+                <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+                  <IconChartBar
+                    className="text-blue-600 dark:text-blue-400"
+                    size={16}
+                  />
+                </div>
+                Current Plan
+              </CardTitle>
+            </CardHeader>
+            <div className="p-6 bg-white dark:bg-gray-900">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {planItems.map((item) => (
+                  <Card
+                    key={item.id}
+                    className="border-blue-100 dark:border-blue-900 hover:border-blue-200 dark:hover:border-blue-800 transition-colors"
+                  >
+                    <div className="h-40 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center">
+                      <div className="text-blue-400 dark:text-blue-500 text-sm">
+                        No Data Yet
+                      </div>
+                    </div>
+                    <CardContent className="p-4">
+                      <h4 className="font-medium text-blue-800 dark:text-blue-300">
+                        {item.title}
+                      </h4>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-2">
+                        <div
+                          className="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full"
+                          style={{ width: `${item.progress}%` }}
+                        ></div>
+                      </div>
+                      <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Progress: {item.progress}%
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default UserProfile;

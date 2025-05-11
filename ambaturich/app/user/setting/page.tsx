@@ -27,6 +27,9 @@ import {
   IconEdit,
   IconDeviceFloppy,
   IconX,
+  IconSettings,
+  IconPalette,
+  IconAlertCircle,
 } from '@tabler/icons-react';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -70,7 +73,7 @@ export default function SettingsPage() {
   if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -126,18 +129,25 @@ export default function SettingsPage() {
     session?.user?.name?.[0] || session?.user?.email?.[0] || 'U';
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-muted-foreground">
-          Manage your account settings and preferences
-        </p>
+    <div className="space-y-8 max-w-4xl mx-auto py-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
+            Settings
+          </h2>
+          <p className="text-muted-foreground mt-1">
+            Manage your account settings and preferences
+          </p>
+        </div>
+        <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
+          Account
+        </div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-8">
         {/* Profile Card */}
-        <Card>
-          <CardHeader className="relative pb-3">
+        <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden">
+          <CardHeader className="relative pb-3 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
             <div className="absolute right-4 top-4">
               {isEditing ? (
                 <div className="flex gap-2">
@@ -145,6 +155,7 @@ export default function SettingsPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsEditing(false)}
+                    className="text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                   >
                     <IconX className="h-5 w-5" />
                     <span className="sr-only">Cancel</span>
@@ -153,6 +164,7 @@ export default function SettingsPage() {
                     variant="ghost"
                     size="icon"
                     onClick={form.handleSubmit(onSubmit)}
+                    className="text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                   >
                     <IconDeviceFloppy className="h-5 w-5" />
                     <span className="sr-only">Save</span>
@@ -163,26 +175,35 @@ export default function SettingsPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsEditing(true)}
+                  className="text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                 >
                   <IconEdit className="h-5 w-5" />
                   <span className="sr-only">Edit profile</span>
                 </Button>
               )}
             </div>
-            <CardTitle>Profile Information</CardTitle>
+            <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
+              <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+                <IconUser
+                  className="text-blue-600 dark:text-blue-400"
+                  size={16}
+                />
+              </div>
+              Profile Information
+            </CardTitle>
             <CardDescription>
               View and update your profile details
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-6 bg-white dark:bg-gray-900">
             {isEditing ? (
               <Form {...form}>
-                <form className="space-y-4">
-                  <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4 mb-6">
+                <form className="space-y-6">
+                  <div className="flex justify-center sm:justify-start mb-6">
                     <div className="relative group">
-                      <Avatar className="h-20 w-20">
+                      <Avatar className="h-24 w-24 border-2 border-blue-100 dark:border-blue-900">
                         <AvatarImage src={session?.user?.image || ''} />
-                        <AvatarFallback className="text-2xl">
+                        <AvatarFallback className="text-3xl bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                           {userInitial}
                         </AvatarFallback>
                       </Avatar>
@@ -190,7 +211,7 @@ export default function SettingsPage() {
                         <Button
                           variant="secondary"
                           size="icon"
-                          className="h-8 w-8 rounded-full"
+                          className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           <IconCamera className="h-4 w-4" />
                         </Button>
@@ -198,43 +219,46 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your full name"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your full name"
+                              {...field}
+                              className="focus-visible:ring-blue-500"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="email@example.com"
-                            {...field}
-                            disabled
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Your email address cannot be changed.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="email@example.com"
+                              {...field}
+                              disabled
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Your email address cannot be changed.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -245,7 +269,7 @@ export default function SettingsPage() {
                         <FormControl>
                           <Textarea
                             placeholder="Tell us about yourself"
-                            className="resize-none"
+                            className="resize-none focus-visible:ring-blue-500 min-h-[100px]"
                             {...field}
                             value={field.value || ''}
                           />
@@ -261,19 +285,23 @@ export default function SettingsPage() {
               </Form>
             ) : (
               <div className="space-y-6">
-                <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4">
-                  <Avatar className="h-20 w-20">
+                <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
+                  <Avatar className="h-24 w-24 border-2 border-blue-100 dark:border-blue-900">
                     <AvatarImage src={session?.user?.image || ''} />
-                    <AvatarFallback className="text-2xl">
+                    <AvatarFallback className="text-3xl bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                       {userInitial}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col sm:mt-2">
-                    <h3 className="text-xl font-medium">
+                  <div className="flex flex-col text-center sm:text-left">
+                    <h3 className="text-2xl font-medium text-blue-800 dark:text-blue-300">
                       {session?.user?.name || 'User'}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground mt-1">
                       {session?.user?.email}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-4 max-w-md">
+                      No bio information available. Click the edit button to add
+                      a bio.
                     </p>
                   </div>
                 </div>
@@ -282,47 +310,64 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Appearance Settings */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle>Appearance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  Toggle between light and dark mode
-                </p>
+        <div className="grid gap-8 md:grid-cols-2">
+          {/* Appearance Settings */}
+          <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden h-fit">
+            <CardHeader className="pb-3 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
+              <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
+                <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+                  <IconPalette
+                    className="text-blue-600 dark:text-blue-400"
+                    size={16}
+                  />
+                </div>
+                Appearance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 bg-white dark:bg-gray-900">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Theme Mode</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Choose between light and dark mode
+                  </p>
+                </div>
+                <ThemeToggle mode="select" />
               </div>
-              <ThemeToggle mode="select" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Account Actions */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle>Danger Zone</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-4">
-              <Separator className="my-2" />
-              <div className="flex flex-col space-y-2">
+          {/* Account Actions */}
+          <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden h-fit">
+            <CardHeader className="pb-3 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
+              <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
+                <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+                  <IconAlertCircle
+                    className="text-blue-600 dark:text-blue-400"
+                    size={16}
+                  />
+                </div>
+                Danger Zone
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 bg-white dark:bg-gray-900">
+              <div>
+                <p className="font-medium">Sign Out</p>
+                <p className="text-sm text-muted-foreground mt-1 mb-4">
+                  This will log you out of your current session
+                </p>
                 <Button
                   variant="destructive"
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full sm:w-auto justify-center"
+                  className="flex items-center gap-2"
                 >
                   <IconLogout className="h-4 w-4" />
                   Sign Out
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                  This will log you out of your current session
-                </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
