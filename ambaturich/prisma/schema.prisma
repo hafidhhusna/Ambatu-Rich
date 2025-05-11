@@ -60,6 +60,7 @@ model user {
   ai_recommendation ai_recommendation[]
   finance_report    finance_report[]
   struk_scanned     struk_scanned[]
+  budget_plan       budget_plan[]
 }
 
 model Account {
@@ -79,4 +80,13 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId], map: "accountId")
+}
+
+model budget_plan{
+  id                String @id @default(uuid())
+  user_id           String
+  budget            Int
+  date_range        DateTime
+  ai_note           String?
+  user              user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
