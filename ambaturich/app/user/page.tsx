@@ -35,11 +35,11 @@ export default function UserPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
 
   useEffect(() => {
-    const sampleExpenses = async () => {
+    const fetchExpenses = async () => {
       try {
-        const res = await fetch('api/struk');
+        const res = await fetch('/api/struk');
         if (!res.ok) {
-          throw new Error('Error Fetching Data');
+          throw new Error('Error fetching data');
         }
         const data = await res.json();
         const formattedData = data.map((item: any) => ({
@@ -67,7 +67,7 @@ export default function UserPage() {
       }
     };
 
-    sampleExpenses();
+    fetchExpenses();
     fetchPlans();
   }, []);
 
@@ -87,7 +87,6 @@ export default function UserPage() {
           <h1 className="text-3xl font-bold mt-1">
             Lorem Ipsum Dolor Sit Amet
           </h1>
-
           <Button className="mt-6 bg-white text-blue-700 hover:bg-white/90 rounded-full">
             Join Now
           </Button>
@@ -105,10 +104,7 @@ export default function UserPage() {
         <CardHeader className="bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
           <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
             <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
-              <IconCalendar
-                className="text-blue-600 dark:text-blue-400"
-                size={16}
-              />
+              <IconCalendar className="text-blue-600 dark:text-blue-400" size={16} />
             </div>
             Your Plan
           </CardTitle>
@@ -176,10 +172,7 @@ export default function UserPage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
-                <IconActivity
-                  className="text-blue-600 dark:text-blue-400"
-                  size={16}
-                />
+                <IconActivity className="text-blue-600 dark:text-blue-400" size={16} />
               </div>
               <div>
                 <CardTitle className="text-blue-800 dark:text-blue-300 text-lg">
