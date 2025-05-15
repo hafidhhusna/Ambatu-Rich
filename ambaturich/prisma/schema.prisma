@@ -58,9 +58,9 @@ model user {
   account           Account[]
   session           Session[]
   ai_recommendation ai_recommendation[]
+  budget_plan       budget_plan[]
   finance_report    finance_report[]
   struk_scanned     struk_scanned[]
-  budget_plan       budget_plan[]
 }
 
 model Account {
@@ -82,12 +82,12 @@ model Account {
   @@index([userId], map: "accountId")
 }
 
-model budget_plan{
-  id                String @id @default(uuid())
-  user_id           String
-  budget            Int
-  used       Int      @default(0)
-  date_range        DateTime?
-  ai_note           String?
-  user              user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model budget_plan {
+  id         String    @id @default(uuid())
+  user_id    String
+  budget     Int
+  ai_note    String?
+  used       Int       @default(0)
+  date_range DateTime?
+  user       user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
