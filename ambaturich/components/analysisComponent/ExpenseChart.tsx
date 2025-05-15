@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Label, Pie, PieChart } from 'recharts';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 import {
   ChartContainer,
@@ -10,69 +10,101 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
-// Updated data with color variables - using blue shades to match your dashboard theme
-const data = [
-  { name: 'Food', value: 400, fill: 'hsl(210, 100%, 50%)' }, // Bright blue
-  { name: 'Rent', value: 300, fill: 'hsl(210, 100%, 65%)' }, // Light blue
-  { name: 'Transport', value: 250, fill: 'hsl(210, 100%, 40%)' }, // Darker blue
-  { name: 'Shopping', value: 200, fill: 'hsl(210, 70%, 75%)' }, // Pale blue
-  { name: 'Entertainment', value: 150, fill: 'hsl(210, 90%, 30%)' }, // Deep blue
-];
-
-// Define an interface for chart config entries to ensure consistent typing
-interface ChartConfigEntry {
-  label: string;
-  color?: string;
+interface ExpenseData {
+  type: string;
+  amount: number;
+  percentage: number; // from backend, percent per category
 }
 
-// Chart configuration with matching blue palette
-const chartConfig: Record<string, ChartConfigEntry> = {
-  value: {
-    label: 'Amount',
-  },
-  Food: {
-    label: 'Food',
-    color: 'hsl(210, 100%, 50%)',
-  },
-  Rent: {
-    label: 'Rent',
-    color: 'hsl(210, 100%, 65%)',
-  },
-  Transport: {
-    label: 'Transport',
-    color: 'hsl(210, 100%, 40%)',
-  },
-  Shopping: {
-    label: 'Shopping',
-    color: 'hsl(210, 70%, 75%)',
-  },
-  Entertainment: {
-    label: 'Entertainment',
-    color: 'hsl(210, 90%, 30%)',
-  },
-};
+// Dummy fallback color palette for new categories
+const defaultColors = [
+  'hsl(210, 100%, 50%)',
+  'hsl(210, 100%, 65%)',
+  'hsl(210, 100%, 40%)',
+  'hsl(210, 70%, 75%)',
+  'hsl(210, 90%, 30%)',
+];
 
 export function ExpenseChart() {
-  // Calculate total
-  const total = React.useMemo(() => {
-    return data.reduce((sum, item) => sum + item.value, 0);
+  const [data, setData] = React.useState<ExpenseData[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Simulate percentage change from last month (could come from backend)
+  const [changeFromLastMonth, setChangeFromLastMonth] = React.useState<number>(-4.3);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch('/api/analytics/expense_breakdown');
+        if (!res.ok) {
+          throw new Error(`Error fetching data: ${res.statusText}`);
+        }
+        const result: ExpenseData[] = await res.json();
+        setData(result);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Calculate percentages
-  const getPercentage = (value: number) => {
-    return ((value / total) * 100).toFixed(1);
+  // Total amount from backend data
+  const total = React.useMemo(() => {
+    return data.reduce((sum, item) => sum + item.amount, 0);
+  }, [data]);
+
+  // Build chart config for ChartContainer from data and defaultColors
+  const chartConfig = React.useMemo(() => {
+    const config = {} as Record<string, { color: string; label: string }>;
+    data.forEach((item, idx) => {
+      config[item.type] = {
+        color: defaultColors[idx % defaultColors.length],
+        label: item.type,
+      };
+    });
+    return config;
+  }, [data]);
+
+  // Prepare pie chart data
+  const pieData = React.useMemo(() => {
+    return data.map((item, idx) => ({
+      name: item.type,
+      value: item.amount,
+      fill: defaultColors[idx % defaultColors.length],
+    }));
+  }, [data]);
+
+  // Format percentage from backend
+  const getPercentage = (item: ExpenseData) => {
+    return item.percentage.toFixed(1);
   };
+
+  if (loading) {
+    return (
+      <p className="text-center text-gray-500 dark:text-gray-400">
+        Loading chart...
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500 dark:text-red-400">{error}</p>
+    );
+  }
 
   return (
     <div className="w-full">
       <div className="flex flex-col items-center">
-        {/* Chart Container - centered */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-[180px]">
-            <ChartContainer
-              config={chartConfig}
-              className="aspect-square h-[160px]"
-            >
+            <ChartContainer config={chartConfig} className="aspect-square h-[160px]">
               <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                 <ChartTooltip
                   cursor={false}
@@ -83,7 +115,7 @@ export function ExpenseChart() {
                   }
                 />
                 <Pie
-                  data={data}
+                  data={pieData}
                   dataKey="value"
                   nameKey="name"
                   innerRadius={40}
@@ -131,28 +163,37 @@ export function ExpenseChart() {
           </div>
         </div>
 
-        {/* Legend - below the chart */}
         <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 text-xs mt-4 w-full">
           {data.map((entry, index) => (
             <div key={index} className="flex items-center gap-1.5">
               <div
                 className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                style={{ backgroundColor: entry.fill }}
-              ></div>
+                style={{
+                  backgroundColor: defaultColors[index % defaultColors.length],
+                }}
+              />
               <span className="text-gray-700 dark:text-gray-300 truncate">
-                {entry.name}
+                {entry.type}
               </span>
               <span className="text-gray-500 dark:text-gray-400 text-[10px] ml-auto">
-                {getPercentage(entry.value)}%
+                {getPercentage(entry)}%
               </span>
             </div>
           ))}
         </div>
 
-        {/* Trend Indicator */}
         <div className="mt-2 flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-          <TrendingUp className="h-3 w-3" />
-          <span>Spending down 4.3% from last month</span>
+          {changeFromLastMonth >= 0 ? (
+            <>
+              <TrendingUp className="h-3 w-3" />
+              <span>Spending up {changeFromLastMonth}% from last month</span>
+            </>
+          ) : (
+            <>
+              <TrendingDown className="h-3 w-3" />
+              <span>Spending down {Math.abs(changeFromLastMonth)}% from last month</span>
+            </>
+          )}
         </div>
       </div>
     </div>

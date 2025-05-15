@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { ExpenseChart } from '@/components/analysisComponent/ExpenseChart';
+import { ImprovementCard } from '@/components/analysisComponent/ImprovementCard';
+import { ReportQuery } from '@/components/analysisComponent/ReportQuery';
 import {
   Card,
   CardHeader,
@@ -9,7 +12,12 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { IconChartPie, IconTrendingUp, IconRobot } from '@tabler/icons-react';
-import { ReportQuery } from '@/components/analysisComponent/ReportQuery';
+
+interface Improvement {
+  category: string;
+  change: string;
+  tip: string;
+}
 
 const AnalyticsPage: React.FC = () => {
   const [overview, setOverview] = useState<{
@@ -18,22 +26,12 @@ const AnalyticsPage: React.FC = () => {
     remaining_budget: number;
   } | null>(null);
 
-  // Improvement areas state
-  const [improvements, setImprovements] = useState<
-    { category: string; change: string; tip: string }[]
-  >([]);
+  // States for improvements
+  const [improvements, setImprovements] = useState<Improvement[]>([]);
   const [improvementLoading, setImprovementLoading] = useState(true);
   const [improvementError, setImprovementError] = useState<string | null>(null);
 
-  // Expense breakdown state
-  const [expenses, setExpenses] = useState<
-    { type: string; amount: number; percentage: number }[]
-  >([]);
-  const [expenseLoading, setExpenseLoading] = useState(true);
-  const [expenseError, setExpenseError] = useState<string | null>(null);
-
   useEffect(() => {
-    // Fetch overview
     const fetchOverview = async () => {
       try {
         const res = await fetch('/api/analytics/financial_overview');
@@ -48,37 +46,28 @@ const AnalyticsPage: React.FC = () => {
       }
     };
 
-    // Fetch improvements
+    fetchOverview();
+  }, []);
+
+  useEffect(() => {
     const fetchImprovements = async () => {
+      setImprovementLoading(true);
+      setImprovementError(null);
       try {
         const res = await fetch('/api/analytics/improvement_areas');
-        if (!res.ok) throw new Error('Failed to fetch improvement areas');
-        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(`Error: ${res.statusText}`);
+        }
+        const data: Improvement[] = await res.json();
         setImprovements(data);
-      } catch (err: any) {
-        setImprovementError(err.message || 'Unknown error');
+      } catch (error: any) {
+        setImprovementError(error.message || 'Failed to fetch improvements');
       } finally {
         setImprovementLoading(false);
       }
     };
 
-    // Fetch expenses
-    const fetchExpenses = async () => {
-      try {
-        const res = await fetch('/api/analytics/expense_breakdown');
-        if (!res.ok) throw new Error('Failed to fetch expense breakdown');
-        const data = await res.json();
-        setExpenses(data);
-      } catch (err: any) {
-        setExpenseError(err.message || 'Unknown error');
-      } finally {
-        setExpenseLoading(false);
-      }
-    };
-
-    fetchOverview();
     fetchImprovements();
-    fetchExpenses();
   }, []);
 
   return (
@@ -155,33 +144,24 @@ const AnalyticsPage: React.FC = () => {
               </CardHeader>
               <div className="p-6 bg-white dark:bg-gray-900">
                 {improvementLoading ? (
-                  <p>Loading improvement areas...</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
                 ) : improvementError ? (
-                  <p className="text-red-500">Error: {improvementError}</p>
-                ) : improvements.length === 0 ? (
-                  <p>No improvement areas found.</p>
+                  <p className="text-sm text-red-500 dark:text-red-400">{improvementError}</p>
                 ) : (
-                  improvements.map(({ category, change, tip }) => (
-                    <div
-                      key={category}
-                      className="border border-gray-300 dark:border-gray-700 rounded-md p-4 mb-4"
-                    >
-                      <h4 className="text-blue-600 dark:text-blue-400 font-semibold mb-1">
-                        {category}
-                      </h4>
-                      <p className="text-gray-700 dark:text-gray-300">{change}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Tip: {tip}
-                      </p>
-                    </div>
-                  ))
+                  <ImprovementCard
+                    improvements={improvements.map((item) => ({
+                      category: item.category,
+                      message: item.change,
+                      action: item.tip,
+                    }))}
+                  />
                 )}
               </div>
             </Card>
 
             {/* Expense Breakdown */}
             <Card className="border-blue-100 dark:border-blue-900 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20 overflow-hidden shadow-md h-full w-full">
-              <CardHeader>
+              <CardHeader className="">
                 <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
                   <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
                     <IconChartPie
@@ -192,41 +172,18 @@ const AnalyticsPage: React.FC = () => {
                   Expense Breakdown
                 </CardTitle>
               </CardHeader>
-              <div className="p-6 flex flex-col bg-white dark:bg-gray-900 rounded-md">
-                {expenseLoading ? (
-                  <p>Loading expense breakdown...</p>
-                ) : expenseError ? (
-                  <p className="text-red-500">Error: {expenseError}</p>
-                ) : expenses.length === 0 ? (
-                  <p>No expenses data found.</p>
-                ) : (
-                  <ul className="w-full max-w-md text-gray-700 dark:text-gray-300">
-                    {expenses.map(({ type, amount, percentage }) => (
-                      <li
-                        key={type}
-                        className="flex justify-between py-1 border-b border-gray-200 dark:border-gray-700"
-                      >
-                        <span>{type}</span>
-                        <span>
-                          Rp {amount.toLocaleString()} ({percentage}%)
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+              <div className="p-6 flex items-center justify-center bg-white dark:bg-gray-900 ">
+                <ExpenseChart />
               </div>
             </Card>
           </div>
 
-          {/* Full Width AI Assistant */}
+          {/* AI Assistant */}
           <Card className="border-blue-100 dark:border-blue-900 shadow-md overflow-hidden w-full">
             <CardHeader className="pb-2 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20">
               <CardTitle className="text-blue-800 dark:text-blue-300 text-lg flex items-center gap-2.5">
                 <div className="p-1.5 bg-blue-100 dark:bg-blue-900/50 rounded-full">
-                  <IconRobot
-                    className="text-blue-600 dark:text-blue-400"
-                    size={16}
-                  />
+                  <IconRobot className="text-blue-600 dark:text-blue-400" size={16} />
                 </div>
                 Ask AI Assistant
               </CardTitle>
