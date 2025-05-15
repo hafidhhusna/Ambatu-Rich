@@ -20,18 +20,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { ExpenseTable, Expense } from '@/components/expense-table';
 
-const planItems = [
-  { id: 1, title: 'Lorem Ipsum Dolor Sit Amet Suki 1', progress: 70 },
-  { id: 2, title: 'Lorem Ipsum Dolor Sit Amet Suki 2', progress: 50 },
-  { id: 3, title: 'Lorem Ipsum Dolor Sit Amet Suki 3', progress: 40 },
-];
-
-// DUMMY DATA
+type Plan = {
+  id: string;
+  budget: number;
+  date_range: string;
+  ai_note?: string;
+  used?: number;
+};
 
 export default function UserPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
 
   useEffect(() => {
     const sampleExpenses = async () => {
@@ -55,7 +56,19 @@ export default function UserPage() {
       }
     };
 
+    const fetchPlans = async () => {
+      try {
+        const res = await fetch('/api/planner/get_plans');
+        if (!res.ok) throw new Error('Failed to fetch plans');
+        const data = await res.json();
+        setPlans(data);
+      } catch (e) {
+        console.error('Error fetching plans:', e);
+      }
+    };
+
     sampleExpenses();
+    fetchPlans();
   }, []);
 
   return (
@@ -105,37 +118,54 @@ export default function UserPage() {
         </CardHeader>
         <CardContent className="p-6 bg-white dark:bg-gray-900">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {planItems.map((item) => (
-              <Card
-                key={item.id}
-                className="relative group overflow-hidden border-blue-100 dark:border-blue-900 hover:border-blue-200 dark:hover:border-blue-800 transition-colors"
-              >
-                <div className="h-40 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center">
-                  <div className="text-blue-400 dark:text-blue-500 text-sm">
-                    No Data Yet
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center mb-2">
-                    <div className="h-6 w-6 rounded-full bg-blue-100 text-xs flex items-center justify-center text-blue-600 dark:bg-blue-900 dark:text-blue-400 mr-2">
-                      AI
+            {plans.length === 0 ? (
+              <div className="text-blue-400 dark:text-blue-500 text-sm">
+                No Plans Yet
+              </div>
+            ) : (
+              plans.map((plan) => {
+                const date = new Date(plan.date_range);
+                const monthYear = date.toLocaleDateString('default', {
+                  month: 'long',
+                  year: 'numeric',
+                });
+
+                const used = plan.used ?? 0;
+                const progress = Math.min((used / plan.budget) * 100, 100).toFixed(0);
+
+                return (
+                  <Card
+                    key={plan.id}
+                    className="relative group overflow-hidden border-blue-100 dark:border-blue-900 hover:border-blue-200 dark:hover:border-blue-800 transition-colors"
+                  >
+                    <div className="h-40 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center">
+                      <div className="text-blue-400 dark:text-blue-500 text-sm">
+                        {used === 0 ? 'No Data Yet' : `Used: Rp${used.toLocaleString()}`}
+                      </div>
                     </div>
-                    <p className="font-medium text-blue-800 dark:text-blue-300">
-                      {item.title}
-                    </p>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-2">
-                    <div
-                      className="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full"
-                      style={{ width: `${item.progress}%` }}
-                    ></div>
-                  </div>
-                  <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Progress: {item.progress}%
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <CardContent className="p-4">
+                      <div className="flex items-center mb-2">
+                        <div className="h-6 w-6 rounded-full bg-blue-100 text-xs flex items-center justify-center text-blue-600 dark:bg-blue-900 dark:text-blue-400 mr-2">
+                          AI
+                        </div>
+                        <p className="font-medium text-blue-800 dark:text-blue-300">
+                          Budget Plan for {monthYear}
+                        </p>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-2">
+                        <div
+                          className="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full"
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Progress: {progress}%
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </CardContent>
       </Card>

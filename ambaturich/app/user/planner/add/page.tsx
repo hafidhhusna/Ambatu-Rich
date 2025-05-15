@@ -10,54 +10,34 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 const UserProfile: React.FC = () => {
   const [budget, setBudget] = useState<number>(0);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [dateRange, setDateRange] = useState('');
   const [aiNote, setAiNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // On mount, set dateRange from URL param if exists
   useEffect(() => {
-    // Read start and end dates from query parameters if available
-    const start = searchParams.get('start');
-    const end = searchParams.get('end');
-
-    if (start) setStartDate(start);
-    if (end) setEndDate(end);
+    const monthParam = searchParams.get('month'); // e.g., '2025-05'
+    if (monthParam) {
+      // Convert 'YYYY-MM' to 'YYYY-MM-DD' for <input type="date">, set day as '01'
+      setDateRange(`${monthParam}-01`);
+    }
   }, [searchParams]);
-
-  // Helper to convert yyyy-mm-dd to dd/mm/yyyy for display
-  const formatDateForDisplay = (isoDate: string) => {
-    if (!isoDate) return '';
-    const [year, month, day] = isoDate.split('-');
-    return `${day}/${month}/${year}`;
-  };
 
   const handleSubmit = async () => {
     setLoading(true);
     setMessage(null);
 
     try {
-      // Simple validation for date range
-      if (!startDate || !endDate) {
-        setMessage('❌ Please select both start and end dates');
-        setLoading(false);
-        return;
-      }
-
-      if (startDate > endDate) {
-        setMessage('❌ Start date cannot be after end date');
-        setLoading(false);
-        return;
-      }
-
       const res = await fetch('/api/planner/add_budget', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           budget,
-          date_range: `${startDate} to ${endDate}`, // send range as string
+          date_range: dateRange,
           ai_note: aiNote,
         }),
       });
@@ -69,7 +49,7 @@ const UserProfile: React.FC = () => {
       }
 
       setMessage('✅ Plan created successfully!');
-      router.push('/user/planner'); // Redirect after success
+      router.push('/user/planner'); // or wherever you want to redirect
     } catch (error: any) {
       setMessage(`❌ ${error.message}`);
     } finally {
@@ -78,10 +58,10 @@ const UserProfile: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto px-4">
+    <div className="space-y-6 max-w-2xl mx-auto px-4">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Add a Plan</h2>
-        <Card className="p-6 mt-4 bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full max-w-full">
+        <Card className="p-6 mt-4 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Plan Ahead</h3>
           <div className="grid grid-cols-1 gap-4 mt-4">
             <Label>
@@ -95,21 +75,12 @@ const UserProfile: React.FC = () => {
               />
             </Label>
             <Label>
-              Start Date
+              Date Range
               <Input
                 type="date"
                 className="mt-1"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </Label>
-            <Label>
-              End Date
-              <Input
-                type="date"
-                className="mt-1"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
               />
             </Label>
             <Label>
@@ -137,7 +108,9 @@ const UserProfile: React.FC = () => {
             {loading ? 'Planning...' : 'Plan Ahead'}
           </Button>
           {message && (
-            <p className="mt-3 text-center text-sm text-gray-700 dark:text-gray-300">{message}</p>
+            <p className="mt-3 text-center text-sm text-gray-700 dark:text-gray-300">
+              {message}
+            </p>
           )}
         </Card>
       </div>
