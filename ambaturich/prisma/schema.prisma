@@ -86,6 +86,7 @@ model budget_plan{
   id                String @id @default(uuid())
   user_id           String
   budget            Int
+  used       Int      @default(0)
   date_range        DateTime
   ai_note           String?
   user              user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
