@@ -11,8 +11,6 @@ export async function POST(req: NextRequest) {
     if (!session || !session.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    // ✅ Ensure user exists before creating the plan
     await prisma.user.upsert({
       where: { id: session.id },
       update: {},

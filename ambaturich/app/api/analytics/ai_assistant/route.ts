@@ -1,5 +1,6 @@
 import {fetchInternalAPI} from "@/lib/analytics_ai_assistant";
 import openai from "@/lib/openai";
+import { read } from "fs";
 import { NextRequest } from "next/server";
 
 export async function POST(req : NextRequest){
@@ -10,11 +11,11 @@ export async function POST(req : NextRequest){
         const [overview, breakdown, tip] = await Promise.all([
             fetchInternalAPI("/api/analytics/financial_overview", cookie),
             fetchInternalAPI("/api/analytics/expense_breakdown", cookie),
-            fetchInternalAPI("/api/improvement_areas", cookie),
+            fetchInternalAPI("/api/analytics/improvement_areas", cookie),
         ]);
 
         let contextPrompt = '';
-        const budgetKeywords = ["anggaran", "budget"];
+        const budgetKeywords = ["anggaran", "budget", "performa"];
         const breakdownKeywords = ["pengeluaran", "expense"];
         const improvementKeywords = ["tips", "saran", "memperbaiki", "improve", "improvement"];
 
@@ -35,9 +36,11 @@ export async function POST(req : NextRequest){
             `;
         } else if(improvementKeywords.some(improvementKeywords => message.toLowerCase().includes(improvementKeywords))){
             contextPrompt = `
-            Tips Sebelumnya :
-            "${tip.tip}"
-            `;
+            Beberapa Saran Pengeluaran Bulanan:
+            ${tip.map(
+                (item: any) => `- Kategori ${item.category}: ${item.tip}`
+            ).join("\n")}
+    `;
         } else {
             contextPrompt = `
             Ini adalah asisten keuangan yang membantu anda dengan data keuangan bulanan.
@@ -57,14 +60,23 @@ export async function POST(req : NextRequest){
         }
 
         const stream = await openai.chat.completions.create({
-        model: 'deepseek/deepseek-prover-v2:free',
+        model: 'gpt-3.5-turbo',
         stream : true,
         messages: [
             { role: 'system', content: 'Kamu adalah asisten keuangan yang cerdas dan teliti.' },
-            { role: 'user', content: contextPrompt },
+            {
+            role: 'user',
+            content: `Berikut adalah data keuangan saya:\n${contextPrompt}`,
+            },
+            {
+            role: 'user',
+            content: message, // pertanyaan pengguna asli
+            },
         ],
         temperature : 0.7,
         });
+
+        console.log('Context Prompt : ', contextPrompt)
 
         const encoder = new TextEncoder();
 
@@ -77,6 +89,8 @@ export async function POST(req : NextRequest){
                 controller.close();
             },
         });
+
+        console.log('Readable : ', readable)
 
         return new Response(readable, {
             headers : {

@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
         : `Tidak ada perubahan dari bulan lalu.`} Berikan 1 kalimat saran masuk akal untuk kategori ini.`;
 
       const completion = await openai.chat.completions.create({
-        model: 'deepseek/deepseek-prover-v2:free',
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
