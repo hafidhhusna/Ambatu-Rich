@@ -48,7 +48,7 @@ export const sidebar_list: NavbarProps[] = [
   },
   {
     menu: 'Planner',
-    path: '/user/planner',
+    path: '/user/planner/add',
     icon: BarChart4,
   },
   {
