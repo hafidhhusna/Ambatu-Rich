@@ -84,13 +84,6 @@ const UserProfile: React.FC = () => {
               />
             </Label>
             <Label>
-              Choose a Plan
-              <select className="mt-1 w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-                <option value="basic">Basic</option>
-                <option value="premium">Premium</option>
-              </select>
-            </Label>
-            <Label>
               Add Note for The AI
               <Textarea
                 className="mt-1"
