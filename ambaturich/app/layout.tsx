@@ -19,8 +19,43 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Ambaturich',
-  description: 'Ambaturich blablabla',
+  title: 'Ambatu Rich - Smart Financial Management',
+  description:
+    'Innovative financial technology solution for intelligent expense tracking, budgeting, and financial insights powered by AI.',
+  keywords: [
+    'financial management',
+    'expense tracking',
+    'budgeting',
+    'AI finance',
+    'Ambatu Rich',
+  ],
+  authors: [
+    { name: 'Hafidh Husna' },
+    { name: 'Mahsa Quereda Bahjah' },
+    { name: 'Brian Tirafi Aufauzan' },
+  ],
+  creator: 'Ambatu Rich Development Team',
+  applicationName: 'Ambatu Rich',
+  generator: 'Next.js',
+  referrer: 'origin-when-cross-origin',
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: 'Ambatu Rich - Smart Financial Management',
+    description:
+      'Innovative financial technology solution for intelligent expense tracking and budgeting.',
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'Ambatu Rich',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ambatu Rich - Smart Financial Management',
+    description:
+      'Innovative financial technology solution for intelligent expense tracking and budgeting.',
+  },
 };
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {

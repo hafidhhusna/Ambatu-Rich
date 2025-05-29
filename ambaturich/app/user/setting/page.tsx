@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -47,21 +46,29 @@ const profileFormSchema = z.object({
   name: z.string().min(2, {
     message: 'Name must be at least 2 characters.',
   }),
+  username: z
+    .string()
+    .min(3, {
+      message: 'Username must be at least 3 characters.',
+    })
+    .max(20, {
+      message: 'Username must be less than 20 characters.',
+    })
+    .regex(/^[a-zA-Z0-9_]+$/, {
+      message: 'Username can only contain letters, numbers, and underscores.',
+    }),
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
-  bio: z
-    .string()
-    .max(160, {
-      message: 'Bio must not be longer than 160 characters.',
-    })
-    .optional(),
 });
 
 export default function SettingsPage() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
   const [isEditing, setIsEditing] = useState(false);
+  const [profileImage, setProfileImage] = useState<string>(
+    session?.user?.image || ''
+  );
 
   // Redirect if not authenticated
   if (status === 'unauthenticated') {
@@ -83,10 +90,28 @@ export default function SettingsPage() {
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       name: session?.user?.name || '',
+      username: session?.user?.username || '',
       email: session?.user?.email || '',
-      bio: '',
     },
   });
+
+  // Update form and states when session changes
+  React.useEffect(() => {
+    if (session?.user) {
+      form.reset({
+        name: session.user.name || '',
+        username: session.user.username || '',
+        email: session.user.email || '',
+      });
+      setProfileImage(session.user.image || '');
+    }
+  }, [
+    session?.user?.name,
+    session?.user?.username,
+    session?.user?.email,
+    session?.user?.image,
+    form,
+  ]);
 
   const handleLogout = async () => {
     try {
@@ -103,25 +128,110 @@ export default function SettingsPage() {
     }
   };
 
+  // Handle profile photo upload
+  const handlePhotoUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error('Image size must be less than 5MB');
+          return;
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          toast.error('Please select a valid image file');
+          return;
+        }
+
+        try {
+          // Upload file to server
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const uploadResponse = await fetch('/api/upload/image', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!uploadResponse.ok) {
+            const error = await uploadResponse.json();
+            throw new Error(error.error || 'Failed to upload image');
+          }
+
+          const uploadResult = await uploadResponse.json();
+          setProfileImage(uploadResult.imageUrl);
+          toast.success(
+            'Profile photo uploaded successfully. Click save to apply changes.'
+          );
+        } catch (error: any) {
+          console.error('Error uploading image:', error);
+          toast.error(error.message || 'Failed to upload image');
+        }
+      }
+    };
+    input.click();
+  };
+
   // Handle form submission
   async function onSubmit(values: z.infer<typeof profileFormSchema>) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('Submitting profile update:', {
+        name: values.name,
+        username: values.username,
+        hasImage: !!profileImage,
+        imageLength: profileImage?.length || 0,
+      });
 
-      // Update session if needed
-      await update({
-        ...session,
-        user: {
-          ...session?.user,
+      // Call API to update profile
+      const response = await fetch('/api/auth/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           name: values.name,
+          username: values.username,
+          image: profileImage,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update profile');
+      }
+
+      const result = await response.json();
+      console.log('Profile update response:', result);
+
+      // Update local states immediately for UI feedback
+      setProfileImage(result.user.image || '');
+
+      // Update session with the correct format for JWT strategy
+      const sessionUpdateResult = await update({
+        user: {
+          name: result.user.name,
+          username: result.user.username,
+          image: result.user.image,
         },
+      });
+
+      console.log('Session update result:', sessionUpdateResult);
+
+      // Update the form with the new data
+      form.reset({
+        name: result.user.name,
+        username: result.user.username,
+        email: session?.user?.email || '',
       });
 
       toast.success('Profile updated successfully');
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error(error.message || 'Failed to update profile');
     }
   }
 
@@ -202,15 +312,19 @@ export default function SettingsPage() {
                   <div className="flex justify-center sm:justify-start mb-6">
                     <div className="relative group">
                       <Avatar className="h-24 w-24 border-2 border-blue-100 dark:border-blue-900">
-                        <AvatarImage src={session?.user?.image || ''} />
+                        <AvatarImage
+                          src={profileImage || session?.user?.image || ''}
+                        />
                         <AvatarFallback className="text-3xl bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                           {userInitial}
                         </AvatarFallback>
                       </Avatar>
                       <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button
+                          type="button"
                           variant="secondary"
                           size="icon"
+                          onClick={handlePhotoUpload}
                           className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           <IconCamera className="h-4 w-4" />
@@ -219,24 +333,47 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter your full name"
-                              {...field}
-                              className="focus-visible:ring-blue-500"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="grid gap-6">
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter your full name"
+                                {...field}
+                                className="focus-visible:ring-blue-500"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter your username"
+                                {...field}
+                                className="focus-visible:ring-blue-500"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Your unique username for the platform.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     <FormField
                       control={form.control}
@@ -259,35 +396,15 @@ export default function SettingsPage() {
                       )}
                     />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="bio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bio</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Tell us about yourself"
-                            className="resize-none focus-visible:ring-blue-500 min-h-[100px]"
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          You can @mention other users and organizations.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </form>
               </Form>
             ) : (
               <div className="space-y-6">
                 <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
                   <Avatar className="h-24 w-24 border-2 border-blue-100 dark:border-blue-900">
-                    <AvatarImage src={session?.user?.image || ''} />
+                    <AvatarImage
+                      src={profileImage || session?.user?.image || ''}
+                    />
                     <AvatarFallback className="text-3xl bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                       {userInitial}
                     </AvatarFallback>
@@ -296,12 +413,11 @@ export default function SettingsPage() {
                     <h3 className="text-2xl font-medium text-blue-800 dark:text-blue-300">
                       {session?.user?.name || 'User'}
                     </h3>
+                    <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                      @{session?.user?.username || 'username'}
+                    </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       {session?.user?.email}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-4 max-w-md">
-                      No bio information available. Click the edit button to add
-                      a bio.
                     </p>
                   </div>
                 </div>

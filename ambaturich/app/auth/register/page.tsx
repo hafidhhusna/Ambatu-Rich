@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { BottomGradient } from '@/components/ui/bottom-gradient';
 import { LabelInputContainer } from '@/components/ui/label-input-container';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -20,6 +21,8 @@ export default function RegisterForm() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Define validation schema with Zod
   const registerSchema = z
@@ -169,15 +172,28 @@ export default function RegisterForm() {
             <Label htmlFor="password" className="dark:text-gray-300">
               Password
             </Label>
-            <Input
-              id="password"
-              name="password"
-              placeholder="••••••••"
-              type="password"
-              className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500"
-              value={formData.password}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                type={showPassword ? 'text' : 'password'}
+                className="pr-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <FiEyeOff className="h-4 w-4" />
+                ) : (
+                  <FiEye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-sm text-red-500 mt-1">{errors.password}</p>
             )}
@@ -187,15 +203,28 @@ export default function RegisterForm() {
             <Label htmlFor="confirmPassword" className="dark:text-gray-300">
               Confirm Password
             </Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="••••••••"
-              type="password"
-              className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="••••••••"
+                type={showConfirmPassword ? 'text' : 'password'}
+                className="pr-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <FiEyeOff className="h-4 w-4" />
+                ) : (
+                  <FiEye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className="text-sm text-red-500 mt-1">
                 {errors.confirmPassword}

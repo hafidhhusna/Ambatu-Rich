@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { IconLogout, IconDashboard } from '@tabler/icons-react';
 import { NavItem } from '@/types/types';
+import { Logo } from './logo';
 
 export const FloatingNav = ({
   navItems,
@@ -56,13 +57,10 @@ export const FloatingNav = ({
         } ${className} max-w-3xl mx-auto transition-all duration-300`}
       >
         {/* Logo section */}
-        <div className="flex items-center gap-1 mr-3">
-          <div className="flex gap-0.5">
-            <div className="w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full bg-[#1f7cff]"></div>
-            <div className="w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full bg-[#1f7cff]"></div>
-          </div>
-          <span className="font-semibold text-[#070f18] hidden md:block dark:text-white md:text-xs">
-            Ambatu-Rich
+        <div className="flex items-center gap-2 mr-3">
+          <Logo variant="icon-only" size="sm" />
+          <span className="font-semibold text-[#070f18] hidden md:block dark:text-white text-sm">
+            Ambatu Rich
           </span>
         </div>
 

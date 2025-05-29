@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import openai from '@/lib/openai';
@@ -9,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getUserSession();
     if (!session || !session.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.id;

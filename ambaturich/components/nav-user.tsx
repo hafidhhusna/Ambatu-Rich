@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
   LogOut,
   Moon,
@@ -119,15 +118,6 @@ export function NavUser({
                 >
                   <BadgeCheck className="h-4 w-4" />
                   <span>Profile</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/user/notification"
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <Bell className="h-4 w-4" />
-                  <span>Notifications</span>
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>

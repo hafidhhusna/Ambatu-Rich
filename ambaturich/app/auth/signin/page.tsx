@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FcGoogle } from 'react-icons/fc';
-import { FiMail } from 'react-icons/fi';
+import { FiMail, FiUser, FiEye, FiEyeOff } from 'react-icons/fi';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { z } from 'zod';
 import { toast } from 'sonner';
@@ -16,17 +16,24 @@ import { LabelInputContainer } from '@/components/ui/label-input-container';
 export default function SignInPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    email: '',
+    emailOrUsername: '',
     password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Define validation schema with Zod
+  // Define validation schema with Zod - accepts either email or username
   const signInSchema = z.object({
-    email: z.string().email('Please enter a valid email address'),
+    emailOrUsername: z.string().min(1, 'Email or username is required'),
     password: z.string().min(1, 'Password is required'),
   });
+
+  // Helper function to determine if input is email or username
+  const isEmail = (input: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -61,16 +68,21 @@ export default function SignInPage() {
 
     setIsLoading(true);
 
+    // Prepare credentials for NextAuth
+    const credentials = {
+      emailOrUsername: formData.emailOrUsername,
+      password: formData.password,
+    };
+
     // First try to authenticate using NextAuth credentials
     signIn('credentials', {
       redirect: false,
-      email: formData.email,
-      password: formData.password,
+      ...credentials,
     })
       .then((result) => {
         if (result?.error) {
           toast.error('Sign in failed', {
-            description: 'Invalid email or password',
+            description: 'Invalid email/username or password',
           });
         } else if (result?.ok) {
           toast.success('Signed in successfully!', {
@@ -117,26 +129,32 @@ export default function SignInPage() {
         <div className="my-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="email" className="dark:text-gray-300">
-                Email
+              <Label htmlFor="emailOrUsername" className="dark:text-gray-300">
+                Email or Username
               </Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 dark:text-gray-500">
-                  <FiMail className="h-4 w-4" />
+                  {isEmail(formData.emailOrUsername) ? (
+                    <FiMail className="h-4 w-4" />
+                  ) : (
+                    <FiUser className="h-4 w-4" />
+                  )}
                 </div>
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="emailOrUsername"
+                  name="emailOrUsername"
+                  type="text"
+                  placeholder="Enter your email or username"
                   className="pl-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500"
-                  value={formData.email}
+                  value={formData.emailOrUsername}
                   onChange={handleChange}
                   required
                 />
               </div>
-              {errors.email && (
-                <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+              {errors.emailOrUsername && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.emailOrUsername}
+                </p>
               )}
             </LabelInputContainer>
 
@@ -151,12 +169,24 @@ export default function SignInPage() {
                 <Input
                   id="password"
                   name="password"
-                  type="password"
-                  className="pl-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder='Enter your password'
+                  className="pl-10 pr-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                   value={formData.password}
                   onChange={handleChange}
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <FiEyeOff className="h-4 w-4" />
+                  ) : (
+                    <FiEye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
               {errors.password && (
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
@@ -173,7 +203,7 @@ export default function SignInPage() {
                 </a>
               </div>
             </div>
-            
+
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>

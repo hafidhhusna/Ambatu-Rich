@@ -3,11 +3,9 @@ import {
   Store,
   Info,
   BarChart3,
-  Bell,
   Settings,
   Users,
   type LucideIcon,
-  BarChart4,
 } from 'lucide-react';
 import { ElementType } from 'react';
 
@@ -47,11 +45,6 @@ export const sidebar_list: NavbarProps[] = [
     icon: BarChart3,
   },
   {
-    menu: 'Planner',
-    path: '/user/planner/add',
-    icon: BarChart4,
-  },
-  {
     menu: 'Upload Struct',
     path: '/user/upload',
     icon: Store,
@@ -60,5 +53,5 @@ export const sidebar_list: NavbarProps[] = [
     menu: 'Settings',
     path: '/user/setting',
     icon: Settings,
-  }
+  },
 ];

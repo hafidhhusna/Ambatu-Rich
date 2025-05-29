@@ -104,8 +104,8 @@ export default function Features() {
             </div>
             <h2 className="text-xl font-bold mb-2">Fraud Alerts</h2>
             <p className="text-gray-600 dark:text-gray-300">
-              Get instant notifications for suspicious transactions. Protect
-              your accounts with real-time monitoring and alerts.
+              Get instant alerts for suspicious transactions. Protect your
+              accounts with real-time monitoring and fraud detection.
             </p>
           </div>
 
