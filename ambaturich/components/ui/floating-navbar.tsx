@@ -29,6 +29,9 @@ export const FloatingNav = ({
   const router = useRouter();
 
   useEffect(() => {
+    // Add SSR guard
+    if (typeof window === 'undefined') return;
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 50);
@@ -83,7 +86,7 @@ export const FloatingNav = ({
 
         {/* Right section: Theme toggle and Sign in/Dashboard */}
         <div className="ml-3 flex items-center space-x-2">
-          <ThemeToggle mode="toggle"/>
+          <ThemeToggle mode="toggle" />
 
           {showDashboard ? (
             <Button

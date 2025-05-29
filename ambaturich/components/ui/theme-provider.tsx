@@ -39,6 +39,9 @@ export function ThemeProvider({
   );
 
   useEffect(() => {
+    // Add SSR guard
+    if (typeof window === 'undefined') return;
+
     const root = window.document.documentElement;
 
     // Remove all theme-related classes
@@ -62,7 +65,8 @@ export function ThemeProvider({
 
   // Listen for system theme changes
   useEffect(() => {
-    if (!enableSystem) return;
+    // Add SSR guard
+    if (!enableSystem || typeof window === 'undefined') return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 

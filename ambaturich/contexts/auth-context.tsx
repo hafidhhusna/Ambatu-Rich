@@ -72,6 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    // Add SSR guard
+    if (typeof window === 'undefined') return;
+
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
