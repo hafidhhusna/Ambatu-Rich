@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DATABASE_URL=postgresql://postgres.xtvtdardouudvqnmjdix:HusnaYTB223@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+        - DIRECT_URL=postgresql://postgres.xtvtdardouudvqnmjdix:HusnaYTB223@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+        - NEXTAUTH_SECRET=yaM0ZS/E46xiclyHtsbEnRj9wuEYnqcE81h0wY3eW7/s=
+        - NEXTAUTH_URL=http://localhost:3000
+        - GOOGLE_CLIENT_ID=689201063191-4bac2hgka5br3bou3p6odufn4g0guad1.apps.googleusercontent.com
+        - GOOGLE_CLIENT_SECRET=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
+        - OPENROUTER_API_KEY=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
+        - OPENAI_API_KEY=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
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres.xtvtdardouudvqnmjdix:HusnaYTB223@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+      - DIRECT_URL=postgresql://postgres.xtvtdardouudvqnmjdix:HusnaYTB223@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+      - NEXTAUTH_SECRET=yaM0ZS/E46xiclyHtsbEnRj9wuEYnqcE81h0wY3eW7/s=
+      - NEXTAUTH_URL=http://localhost:3000
+      - GOOGLE_CLIENT_ID=689201063191-4bac2hgka5br3bou3p6odufn4g0guad1.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - OPENROUTER_API_KEY=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
+      - OPENAI_API_KEY=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
+    volumes:
+      - ./uploads:/app/uploads 
+
+volumes:
+  postgres_data:
+
+networks:
+  ambaturich-network:
+    driver: bridge

@@ -1,0 +1,11 @@
+{
+  "name": "supabase-bucket-setup",
+  "version": "1.0.0",
+  "description": "Script to create Supabase storage bucket",
+  "main": "create-bucket.js",
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "dotenv": "^16.3.1"
+  }
+}
