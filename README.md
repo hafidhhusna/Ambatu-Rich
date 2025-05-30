@@ -1,44 +1,27 @@
-# Dokumentasi Programmer H8 2025
+<p align="center">
+ <img width="500px" src="docs/logo.png" />
+</p>
+<p align="center">
+ <h2 align="center">Kelompok AmbaFinance</h2>
+ <p align="start">Ketua Kelompok: Mahsa Quereda Bahjah - 22/503299/TK/54984</p>
+ <p align="start">Anggota 1: Hafidh Husna - 22/498640/TK/54706</p>
+ <p align="start">Anggota 2: Brian Tirafi Aufauzan - 22/497916/TK/54592</p>
+</p>
 
-## Sort by Content
->Linked for quick access
-### .github
-#### In Use
-[[update-readme.yml]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/.github/workflows/update-readme.yml) (Last updated: Unknown)
-#### Documentation
-- Unavailable
+<br>
+<p align="center">
+ <p align="center">AmbatuRich adalah Web untuk mengatur finansialmu. AmbatuRich membantu kamu untuk mengatur keuanganmu dengan baik dan menghemat uangmu.</p>
+</p>
 
-### Arm
-#### In Use
-[[stepper_Arm_2.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Arm/stepper_Arm_2.ino) (Last updated: 2025-01-27)
-#### Documentation
-[[stepper_Arm.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Arm/stepper_Arm.ino) (Last updated: 2024-11-06)
+## Features
 
-### Line_follower
-#### In Use
-[[line_FuzzyPID.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Line_follower/line_FuzzyPID.ino) (Last updated: 2024-11-06)
-#### Documentation
-[[line_MUX.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Line_follower/line_MUX.ino) (Last updated: 2024-11-06)
-[[line_TestWarna.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Line_follower/line_TestWarna.ino) (Last updated: 2024-11-06)
+1. Upload budgeting report <br>
+2. Analisis Keuangan <br>
+3. Export to Excel <br>
+4. Budget Planner <br>
+5. Budgeting report <br>
 
-### Movement
-#### In Use
-[[test - Copy.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/test - Copy.ino) (Last updated: Unknown)
-#### Documentation
-[[test.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/test.ino) (Last updated: Unknown)
-[[mov_PID_Position.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/mov_PID_Position.ino) (Last updated: 2025-03-04)
-[[mov_PID_4.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/mov_PID_4.ino) (Last updated: 2025-01-29)
-[[mov_PID_3.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/mov_PID_3.ino) (Last updated: 2025-01-28)
-[[trial_ENCODER_2.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/trial_ENCODER_2.ino) (Last updated: 2025-01-28)
-[[mov_PID_2.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/mov_PID_2.ino) (Last updated: 2025-01-27)
-[[trial_ENCODER.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/trial_ENCODER.ino) (Last updated: 2025-01-27)
-[[mov_PID.ino]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Movement/mov_PID.ino) (Last updated: 2024-11-06)
-
-### Vision
-#### In Use
-[[yolov5_train.ipynb]](https://github.com/GMRT-H8/KRI-NASIONAL-2025/blob/test-brian/Vision/yolov5_train.ipynb) (Last updated: 2024-11-12)
-#### Documentation
-- Unavailable
-
-
-<!-- Updated automatically -->
+<br>
+<p align="center">
+Developed by Kelompok AMBATUFINANCE
+</p>
