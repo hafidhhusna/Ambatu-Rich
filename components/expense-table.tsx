@@ -22,6 +22,7 @@ export type Expense = {
   type: string;
   amount: number;
   date: string;
+  name?: string;
 };
 
 interface ExpenseTableProps {
@@ -50,7 +51,7 @@ export function ExpenseTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">ID</TableHead>
+                <TableHead>Name</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead className="text-right">Date</TableHead>
@@ -59,16 +60,26 @@ export function ExpenseTable({
             <TableBody>
               {expenses.map((expense) => (
                 <TableRow key={expense.id}>
-                  <TableCell className="font-medium">{expense.id}</TableCell>
-                  <TableCell>{expense.type}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="font-medium">
+                    {expense.name || 'Unnamed Expense'}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      {expense.type}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
                     {new Intl.NumberFormat('id-ID', {
                       style: 'currency',
                       currency: 'IDR',
                     }).format(expense.amount)}
                   </TableCell>
-                  <TableCell className="text-right">
-                    {new Date(expense.date).toLocaleDateString()}
+                  <TableCell className="text-right text-muted-foreground">
+                    {new Date(expense.date).toLocaleDateString('id-ID', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
                   </TableCell>
                 </TableRow>
               ))}

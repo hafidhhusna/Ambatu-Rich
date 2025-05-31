@@ -28,6 +28,10 @@ interface ChartConfigEntry {
   color?: string;
 }
 
+interface ExpenseChartProps {
+  selectedMonth?: string;
+}
+
 // Generate a consistent color palette for categories
 const generateColors = (count: number): string[] => {
   const colors = [
@@ -50,7 +54,7 @@ const generateColors = (count: number): string[] => {
   return colors.slice(0, count);
 };
 
-export function ExpenseChart() {
+export function ExpenseChart({ selectedMonth }: ExpenseChartProps) {
   const [expenseData, setExpenseData] = React.useState<ExpenseData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -60,7 +64,19 @@ export function ExpenseChart() {
     const fetchExpenseData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/analytics/expense_breakdown');
+
+        // Build URL with query parameters if selectedMonth is provided
+        let url = '/api/analytics/expense_breakdown';
+        if (selectedMonth) {
+          const [year, month] = selectedMonth.split('-');
+          const queryParams = new URLSearchParams({
+            year,
+            month,
+          });
+          url = `${url}?${queryParams}`;
+        }
+
+        const response = await fetch(url);
 
         if (!response.ok) {
           throw new Error('Failed to fetch expense data');
@@ -78,7 +94,7 @@ export function ExpenseChart() {
     };
 
     fetchExpenseData();
-  }, []);
+  }, [selectedMonth]);
 
   // Transform data for the chart
   const chartData: ChartDataItem[] = React.useMemo(() => {

@@ -41,6 +41,7 @@ model struk_scanned {
   user_id        String?   @db.VarChar
   type           String?
   amount         Int?
+  name           String?   @db.VarChar
   user           user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 

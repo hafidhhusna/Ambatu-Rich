@@ -18,6 +18,13 @@ import {
   IconCalendar,
 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ExpenseTable, Expense } from '@/components/expense-table';
 
 export default function UserPage() {
@@ -25,30 +32,89 @@ export default function UserPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const res = await fetch('/api/struk');
-        if (!res.ok) {
-          throw new Error('Error fetching data');
-        }
-        const data = await res.json();
-        const formattedData = data.map((item: any) => ({
-          id: item.id,
-          type: item.type,
-          amount: item.amount,
-          date: item.uploadedAt,
-        }));
-        setExpenses(formattedData);
-      } catch (error: any) {
-        setError(error.message || 'Terjadi Kesalahan');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // State for selected month and year
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}`;
+  });
 
-    fetchExpenses();
-  }, []);
+  // Function to generate month options (last 12 months + next 6 months)
+  const getMonthOptions = () => {
+    const options = [];
+    const now = new Date();
+
+    // Generate months from 12 months ago to 6 months in the future
+    for (let i = -12; i <= 6; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const value = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, '0')}`;
+      const label = date.toLocaleString('default', {
+        month: 'long',
+        year: 'numeric',
+      });
+      options.push({ value, label });
+    }
+
+    return options;
+  };
+
+  // Function to get display text for selected month
+  const getSelectedMonthDisplay = () => {
+    const [year, month] = selectedMonth.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  };
+
+  // Fetch expenses based on selected month
+  const fetchExpenses = async (monthYear: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Build URL with query parameters if month is selected
+      let url = '/api/struk';
+      if (monthYear) {
+        const [year, month] = monthYear.split('-');
+        const queryParams = new URLSearchParams({
+          year,
+          month,
+        });
+        url = `${url}?${queryParams}`;
+      }
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error('Error fetching data');
+      }
+      const data = await res.json();
+      const formattedData = data.map((item: any) => ({
+        id: item.id,
+        type: item.type,
+        amount: item.amount,
+        date: item.uploadedAt,
+        name: item.name,
+      }));
+      setExpenses(formattedData);
+    } catch (error: any) {
+      setError(error.message || 'Terjadi Kesalahan');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect to fetch data when selected month changes
+  useEffect(() => {
+    fetchExpenses(selectedMonth);
+  }, [selectedMonth]);
+
+  // Handle month change
+  const handleMonthChange = (value: string) => {
+    setSelectedMonth(value);
+  };
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto py-6 px-6 md:px-0 w-full">
@@ -56,8 +122,25 @@ export default function UserPage() {
         <h2 className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
           Dashboard
         </h2>
-        <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
-          May 2025
+
+        {/* Month Selector */}
+        <div className="flex items-center gap-3">
+          <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
+            {getSelectedMonthDisplay()}
+          </div>
+
+          <Select value={selectedMonth} onValueChange={handleMonthChange}>
+            <SelectTrigger className="h-8 w-8 p-0 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 bg-background">
+              <IconCalendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            </SelectTrigger>
+            <SelectContent align="end" className="w-48">
+              {getMonthOptions().map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -68,6 +151,9 @@ export default function UserPage() {
           <h1 className="text-3xl font-bold mt-1">
             Semangat Mencapai Target Keuangan Anda
           </h1>
+          <p className="text-sm text-white/60 mt-2">
+            Viewing data for {getSelectedMonthDisplay()}
+          </p>
         </div>
 
         {/* Decorative elements */}
@@ -93,7 +179,7 @@ export default function UserPage() {
                   Expense History
                 </CardTitle>
                 <CardDescription>
-                  Your recent expense transactions
+                  Your expense transactions for {getSelectedMonthDisplay()}
                 </CardDescription>
               </div>
             </div>

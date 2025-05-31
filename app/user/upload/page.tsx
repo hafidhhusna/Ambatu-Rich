@@ -57,7 +57,7 @@ const expenseTypes = [
 
 // Function to extract information from OCR text
 const extractReceiptInfo = (text: string) => {
-  if (!text) return { amount: '', date: '', type: 'Shopping' };
+  if (!text) return { amount: '', date: '', type: 'Shopping', name: '' };
 
   console.log('OCR Text for extraction:', text.substring(0, 300) + '...');
 
@@ -173,8 +173,58 @@ const extractReceiptInfo = (text: string) => {
     type = 'Education';
   }
 
-  console.log('Extracted receipt info:', { amount, date, type });
-  return { amount, date, type };
+  // Try to extract a meaningful name/description from the receipt
+  let name = '';
+
+  // Look for store/merchant names (usually at the top of receipts)
+  const merchantPatterns = [
+    /^([A-Z][A-Za-z\s&.,-]+)(?:\n|\r)/m, // First line that starts with capital letter
+    /(?:Toko|Store|Restaurant|Resto|Cafe|Shop)\s*:?\s*([A-Za-z\s&.,-]+)/i,
+    /([A-Z][A-Za-z\s&.,-]{2,20})(?:\s*(?:Cabang|Branch|Store))/i,
+  ];
+
+  for (const pattern of merchantPatterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      name = match[1].trim();
+      console.log(`Found merchant name: ${name}`);
+      break;
+    }
+  }
+
+  // If no merchant name found, try to get a generic description based on type
+  if (!name) {
+    const lines = text.split('\n').filter((line) => line.trim().length > 0);
+    // Get the first meaningful line (usually merchant name)
+    for (const line of lines.slice(0, 3)) {
+      if (
+        line.trim().length > 3 &&
+        !line.match(/\d{2}[-\/]\d{2}[-\/]\d{2,4}/) &&
+        !line.toLowerCase().includes('receipt')
+      ) {
+        name = line.trim();
+        break;
+      }
+    }
+  }
+
+  // Fallback: create a default name based on type
+  if (!name) {
+    const typeNames = {
+      'Food & Drinks': 'Food Purchase',
+      Transportation: 'Transport Expense',
+      Shopping: 'Shopping Expense',
+      Entertainment: 'Entertainment Expense',
+      'Bills & Utilities': 'Utility Bill',
+      Health: 'Health Expense',
+      Education: 'Education Expense',
+      Other: 'Other Expense',
+    };
+    name = typeNames[type as keyof typeof typeNames] || 'General Expense';
+  }
+
+  console.log('Extracted receipt info:', { amount, date, type, name });
+  return { amount, date, type, name };
 };
 
 // Helper function to format date strings into YYYY-MM-DD
@@ -319,6 +369,7 @@ export default function UploadStrukPage() {
     type: '',
     amount: '',
     date: new Date().toISOString().split('T')[0],
+    name: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -537,12 +588,13 @@ export default function UploadStrukPage() {
             // Extract information from OCR text
             const extractedInfo = extractReceiptInfo(extractedText);
 
-            // Set form data with extracted information
+            // Set form data with extracted information including name
             setFormData({
               type: extractedInfo.type || 'Shopping',
               amount: extractedInfo.amount || '',
               date:
                 extractedInfo.date || new Date().toISOString().split('T')[0],
+              name: extractedInfo.name || '',
             });
           }
         }
@@ -577,7 +629,7 @@ export default function UploadStrukPage() {
     setIsUploading(true);
 
     try {
-      // Update the receipt record with final details
+      // Update the receipt record with final details including name
       const response = await fetch(`/api/struk/${receiptId}`, {
         method: 'PATCH',
         headers: {
@@ -587,6 +639,7 @@ export default function UploadStrukPage() {
           type: formData.type,
           amount: formData.amount ? parseFloat(formData.amount) : undefined,
           date: formData.date,
+          name: formData.name || undefined,
         }),
       });
 
@@ -647,6 +700,7 @@ export default function UploadStrukPage() {
       type: '',
       amount: '',
       date: new Date().toISOString().split('T')[0],
+      name: '',
     });
   };
 
@@ -837,6 +891,30 @@ export default function UploadStrukPage() {
 
             {/* Extracted Information */}
             <div className="grid grid-cols-1 gap-4">
+              {/* Custom Name Field */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="name"
+                  className="text-blue-800 dark:text-blue-300 flex items-center gap-2"
+                >
+                  <IconReceipt size={16} className="text-blue-500" />
+                  Expense Name
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  className="border-blue-200 focus:ring-blue-500 dark:border-blue-800 dark:focus:ring-blue-600"
+                  placeholder="Enter a custom name for this expense"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Give your expense a memorable name (e.g., "Lunch at
+                  McDonald's", "Grocery Shopping")
+                </p>
+              </div>
+
               <div className="space-y-2">
                 <Label
                   htmlFor="type"
@@ -929,7 +1007,7 @@ export default function UploadStrukPage() {
             <Button
               type="button"
               onClick={finalizeReceipt}
-              disabled={isUploading}
+              disabled={isUploading || !formData.name.trim()}
               className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
             >
               {isUploading ? 'Saving...' : 'Confirm Details'}

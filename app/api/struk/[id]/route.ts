@@ -16,7 +16,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { type, amount, date } = body;
+    const { type, amount, date, name } = body;
 
     // Validate required fields
     if (!type) {
@@ -29,6 +29,7 @@ export async function PATCH(
     if (type) updateData.type = type;
     if (amount !== undefined) updateData.amount = amount;
     if (date) updateData.uploadedAt = new Date(date);
+    if (name) updateData.name = name;
 
     // Update the receipt record
     const updatedReceipt = await prisma.struk_scanned.update({

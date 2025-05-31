@@ -11,23 +11,52 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = session.id;
-    const now = new Date();
 
-    const getRange = (monthOffset: number) => {
-      const d = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
-      const start = new Date(d.getFullYear(), d.getMonth(), 1);
-      const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
-      return { start, end };
+    // Get query parameters for year and month
+    const { searchParams } = new URL(req.url);
+    const yearParam = searchParams.get('year');
+    const monthParam = searchParams.get('month');
+
+    // Use provided year/month or default to current month
+    const now = new Date();
+    const year = yearParam ? parseInt(yearParam) : now.getFullYear();
+    const month = monthParam ? parseInt(monthParam) : now.getMonth() + 1; // Keep month as 1-12
+
+    const getDateRange = (targetYear: number, targetMonth: number) => {
+      // Create ISO date strings for precise filtering
+      const startOfMonth = `${targetYear}-${targetMonth
+        .toString()
+        .padStart(2, '0')}-01T00:00:00.000Z`;
+      const nextMonth = targetMonth === 12 ? 1 : targetMonth + 1;
+      const nextYear = targetMonth === 12 ? targetYear + 1 : targetYear;
+      const startOfNextMonth = `${nextYear}-${nextMonth
+        .toString()
+        .padStart(2, '0')}-01T00:00:00.000Z`;
+
+      return {
+        start: new Date(startOfMonth),
+        end: new Date(startOfNextMonth),
+      };
     };
 
-    const { start: currentStart, end: currentEnd } = getRange(0);
-    const { start: prevStart, end: prevEnd } = getRange(-1);
+    // Get current selected month and previous month
+    const currentRange = getDateRange(year, month);
+    const prevMonth = month === 1 ? 12 : month - 1;
+    const prevYear = month === 1 ? year - 1 : year;
+    const prevRange = getDateRange(prevYear, prevMonth);
+
+    console.log(
+      `🔄 [Improvement Areas] Current: ${month}/${year}, Previous: ${prevMonth}/${prevYear}`
+    );
 
     const fetchData = async (start: Date, end: Date) => {
       const struks = await prisma.struk_scanned.findMany({
         where: {
           user_id: userId,
-          uploadedAt: { gte: start, lte: end },
+          uploadedAt: {
+            gte: start,
+            lt: end,
+          },
           amount: { not: null },
           type: { not: null },
         },
@@ -42,9 +71,12 @@ export async function GET(req: NextRequest) {
     };
 
     const [currentData, prevData] = await Promise.all([
-      fetchData(currentStart, currentEnd),
-      fetchData(prevStart, prevEnd),
+      fetchData(currentRange.start, currentRange.end),
+      fetchData(prevRange.start, prevRange.end),
     ]);
+
+    console.log(`📊 [Improvement Areas] Current data:`, currentData);
+    console.log(`📊 [Improvement Areas] Previous data:`, prevData);
 
     const categories = new Set([
       ...Object.keys(currentData),
@@ -52,6 +84,16 @@ export async function GET(req: NextRequest) {
     ]);
 
     const improvements = [];
+
+    // Get month names for the prompt
+    const currentMonthName = new Date(year, month - 1).toLocaleString('id-ID', {
+      month: 'long',
+      year: 'numeric',
+    });
+    const prevMonthName = new Date(prevYear, prevMonth - 1).toLocaleString(
+      'id-ID',
+      { month: 'long', year: 'numeric' }
+    );
 
     for (const category of Array.from(categories)) {
       const curr = currentData[category] || 0;
@@ -61,12 +103,12 @@ export async function GET(req: NextRequest) {
         prev === 0 ? (curr > 0 ? 100 : 0) : ((curr - prev) / prev) * 100;
 
       // Prompt to OpenAI for a tip
-      const prompt = `Saya melihat pengeluaran kategori "${category}" sebesar Rp${curr.toLocaleString()} bulan ini. ${
+      const prompt = `Saya melihat pengeluaran kategori "${category}" sebesar Rp${curr.toLocaleString()} pada ${currentMonthName}. ${
         change > 0
-          ? `Itu naik ${change.toFixed(1)}% dibanding bulan lalu.`
+          ? `Itu naik ${change.toFixed(1)}% dibanding ${prevMonthName}.`
           : change < 0
-          ? `Itu turun ${Math.abs(change).toFixed(1)}% dari bulan lalu.`
-          : `Tidak ada perubahan dari bulan lalu.`
+          ? `Itu turun ${Math.abs(change).toFixed(1)}% dari ${prevMonthName}.`
+          : `Tidak ada perubahan dari ${prevMonthName}.`
       } Berikan 1 kalimat saran masuk akal untuk kategori ini.`;
 
       const completion = await openai.chat.completions.create({
@@ -96,6 +138,10 @@ export async function GET(req: NextRequest) {
         tip,
       });
     }
+
+    console.log(
+      `💡 [Improvement Areas] Generated ${improvements.length} improvements`
+    );
 
     return NextResponse.json(improvements);
   } catch (error) {

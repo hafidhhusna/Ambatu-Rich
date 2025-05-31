@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,6 +10,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { IconCalendar, IconChartBar } from '@tabler/icons-react';
+import { MonthPicker } from '@/components/ui/month-picker';
 
 const planItems = [
   { id: 1, title: 'Lorem Ipsum Dolor Sit Amet', progress: 70 },
@@ -21,13 +22,38 @@ const planItems = [
 ];
 
 const UserProfile: React.FC = () => {
+  // State for selected month and year
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}`;
+  });
+
+  // Function to get display text for selected month
+  const getSelectedMonthDisplay = () => {
+    const [year, month] = selectedMonth.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  };
+
+  // Handle month change
+  const handleMonthChange = (value: string) => {
+    setSelectedMonth(value);
+    // Here you can add logic to fetch data for the selected month
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-6 px-6 md:px-0 w-full">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-2xl font-bold tracking-tight">AI Planner</h2>
-        <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
-          May 2025
-        </div>
+
+        {/* Month Picker */}
+        <MonthPicker
+          selectedMonth={selectedMonth}
+          onMonthChange={handleMonthChange}
+        />
       </div>
 
       {/* Overview Card */}
@@ -42,7 +68,8 @@ const UserProfile: React.FC = () => {
                 Planning Overview
               </CardTitle>
               <CardDescription className="text-white/80 mt-1">
-                Organize your financial goals and track progress
+                Organize your financial goals and track progress for{' '}
+                {getSelectedMonthDisplay()}
               </CardDescription>
             </div>
           </div>
@@ -56,7 +83,7 @@ const UserProfile: React.FC = () => {
                 </p>
                 <p className="text-white text-lg font-medium mb-2">
                   {index === 0
-                    ? 'How to Improve This Month Expenses'
+                    ? `How to Improve ${getSelectedMonthDisplay()} Expenses`
                     : 'How to Improve Future Expenses'}
                 </p>
                 <Button className="mt-2 bg-white/20 hover:bg-white/30 text-white border-0">
