@@ -16,13 +16,11 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { sidebar_list } from '@/metadata/navbar_list';
-import { useProfileImage } from '@/hooks/use-profile-image';
 
 export function UserSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession();
-  const { profileImage } = useProfileImage();
   const pathname = usePathname();
 
   const navItems = React.useMemo(() => {
@@ -49,10 +47,10 @@ export function UserSidebar({
       user: {
         name: session?.user?.name || 'Guest User',
         email: session?.user?.email || 'guest@example.com',
-        avatar: profileImage || '/avatars/default.jpg',
+        avatar: session?.user?.image || '/avatars/default.jpg',
       },
     }),
-    [session, profileImage]
+    [session]
   );
 
   return (

@@ -5,12 +5,13 @@ import { getUserSession } from '@/lib/session';
 export async function getFinancialOverview() {
   try {
     const session = await getUserSession();
-    if (!session || !session.id) {
-      throw new Error('Unauthorized - No valid session');
+    if (!session?.id) {
+      console.error('❌ No session found for financial overview');
+      throw new Error('Unauthorized - please log in');
     }
 
     const userId = session.id;
-    console.log('📊 Getting financial overview for user:', userId);
+    console.log('👤 Getting financial overview for user:', userId);
 
     // Get current month & year
     const now = new Date();
@@ -61,7 +62,7 @@ export async function getFinancialOverview() {
       remaining_budget: total_budget - total_spent,
     };
 
-    console.log('✅ Financial overview retrieved:', result);
+    console.log('✅ Financial overview retrieved successfully:', result);
     return result;
   } catch (error) {
     console.error('💥 Financial overview error:', error);
@@ -72,12 +73,13 @@ export async function getFinancialOverview() {
 export async function getExpenseBreakdown() {
   try {
     const session = await getUserSession();
-    if (!session || !session.id) {
-      throw new Error('Unauthorized - No valid session');
+    if (!session?.id) {
+      console.error('❌ No session found for expense breakdown');
+      throw new Error('Unauthorized - please log in');
     }
 
     const userId = session.id;
-    console.log('📊 Getting expense breakdown for user:', userId);
+    console.log('👤 Getting expense breakdown for user:', userId);
 
     // Get current month & year
     const now = new Date();
@@ -131,7 +133,7 @@ export async function getExpenseBreakdown() {
     }));
 
     const result = { items };
-    console.log('✅ Expense breakdown retrieved:', { itemCount: items.length });
+    console.log('✅ Expense breakdown retrieved successfully:', result);
     return result;
   } catch (error) {
     console.error('💥 Expense breakdown error:', error);
@@ -142,11 +144,12 @@ export async function getExpenseBreakdown() {
 export async function getImprovementAreas() {
   try {
     const session = await getUserSession();
-    if (!session || !session.id) {
-      throw new Error('Unauthorized - No valid session');
+    if (!session?.id) {
+      console.error('❌ No session found for improvement areas');
+      throw new Error('Unauthorized - please log in');
     }
 
-    console.log('📊 Getting improvement areas for user:', session.id);
+    console.log('👤 Getting improvement areas for user:', session.id);
 
     // Return some sample improvement tips
     const result = [
@@ -165,7 +168,7 @@ export async function getImprovementAreas() {
       { category: 'Belanja', tip: 'Buat daftar belanja dan patuhi anggaran' },
     ];
 
-    console.log('✅ Improvement areas retrieved:', { tipCount: result.length });
+    console.log('✅ Improvement areas retrieved successfully');
     return result;
   } catch (error) {
     console.error('💥 Improvement areas error:', error);

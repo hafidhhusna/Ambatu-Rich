@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   experimental: {
-    serverComponentsExternalPackages: ['tesseract.js'],
+    serverComponentsExternalPackages: ['tesseract.js', 'prisma'],
     outputFileTracingIncludes: {
       '/api/*/': [
         './node_modules/*/.wasm',
@@ -13,6 +13,42 @@ const nextConfig = {
         './ind.traineddata',
       ],
     },
+  },
+  // Add headers configuration
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Max-Age',
+            value: '86400',
+          },
+        ],
+      },
+      {
+        source: '/api/auth/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization, Cookie',
+          },
+        ],
+      },
+    ];
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
@@ -34,6 +70,10 @@ const nextConfig = {
     });
 
     return config;
+  },
+  // If using custom server, add this
+  serverRuntimeConfig: {
+    maxRequestSize: '50mb',
   },
 };
 

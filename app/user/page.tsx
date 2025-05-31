@@ -53,7 +53,9 @@ export default function UserPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto py-6 px-6 md:px-0 w-full">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">Dashboard</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
+          Dashboard
+        </h2>
         <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full font-medium">
           May 2025
         </div>

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Label, Pie, PieChart } from 'recharts';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, Loader2 } from 'lucide-react';
 
 import {
   ChartContainer,
@@ -10,102 +10,161 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
+// Define TypeScript interfaces
 interface ExpenseData {
   type: string;
   amount: number;
-  percentage: number; // from backend, percent per category
+  percentage: number;
 }
 
-// Dummy fallback color palette for new categories
-const defaultColors = [
-  'hsl(210, 100%, 50%)',
-  'hsl(210, 100%, 65%)',
-  'hsl(210, 100%, 40%)',
-  'hsl(210, 70%, 75%)',
-  'hsl(210, 90%, 30%)',
-];
+interface ChartDataItem {
+  name: string;
+  value: number;
+  fill: string;
+}
+
+interface ChartConfigEntry {
+  label: string;
+  color?: string;
+}
+
+// Generate a consistent color palette for categories
+const generateColors = (count: number): string[] => {
+  const colors = [
+    'hsl(210, 100%, 50%)', // Bright blue
+    'hsl(210, 100%, 65%)', // Light blue
+    'hsl(210, 100%, 40%)', // Darker blue
+    'hsl(210, 70%, 75%)', // Pale blue
+    'hsl(210, 90%, 30%)', // Deep blue
+    'hsl(200, 80%, 60%)', // Cyan blue
+    'hsl(220, 85%, 55%)', // Purple blue
+    'hsl(190, 75%, 45%)', // Teal blue
+  ];
+
+  // If we need more colors than we have, generate them
+  while (colors.length < count) {
+    const hue = 210 + (colors.length - 8) * 30; // Shift hue for additional colors
+    colors.push(`hsl(${hue % 360}, 70%, 50%)`);
+  }
+
+  return colors.slice(0, count);
+};
 
 export function ExpenseChart() {
-  const [data, setData] = React.useState<ExpenseData[]>([]);
+  const [expenseData, setExpenseData] = React.useState<ExpenseData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Simulate percentage change from last month (could come from backend)
-  const [changeFromLastMonth, setChangeFromLastMonth] = React.useState<number>(-4.3);
-
+  // Fetch expense data
   React.useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+    const fetchExpenseData = async () => {
       try {
-        const res = await fetch('/api/analytics/expense_breakdown');
-        if (!res.ok) {
-          throw new Error(`Error fetching data: ${res.statusText}`);
+        setLoading(true);
+        const response = await fetch('/api/analytics/expense_breakdown');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch expense data');
         }
-        const result: ExpenseData[] = await res.json();
-        setData(result);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch data');
+
+        const data: ExpenseData[] = await response.json();
+        setExpenseData(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching expense data:', err);
+        setError('Failed to load expense data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchExpenseData();
   }, []);
 
-  // Total amount from backend data
-  const total = React.useMemo(() => {
-    return data.reduce((sum, item) => sum + item.amount, 0);
-  }, [data]);
-
-  // Build chart config for ChartContainer from data and defaultColors
-  const chartConfig = React.useMemo(() => {
-    const config = {} as Record<string, { color: string; label: string }>;
-    data.forEach((item, idx) => {
-      config[item.type] = {
-        color: defaultColors[idx % defaultColors.length],
-        label: item.type,
-      };
-    });
-    return config;
-  }, [data]);
-
-  // Prepare pie chart data
-  const pieData = React.useMemo(() => {
-    return data.map((item, idx) => ({
+  // Transform data for the chart
+  const chartData: ChartDataItem[] = React.useMemo(() => {
+    const colors = generateColors(expenseData.length);
+    return expenseData.map((item, index) => ({
       name: item.type,
       value: item.amount,
-      fill: defaultColors[idx % defaultColors.length],
+      fill: colors[index],
     }));
-  }, [data]);
+  }, [expenseData]);
 
-  // Format percentage from backend
-  const getPercentage = (item: ExpenseData) => {
-    return item.percentage.toFixed(1);
-  };
+  // Generate chart config dynamically
+  const chartConfig: Record<string, ChartConfigEntry> = React.useMemo(() => {
+    const config: Record<string, ChartConfigEntry> = {
+      value: {
+        label: 'Amount',
+      },
+    };
 
+    const colors = generateColors(expenseData.length);
+    expenseData.forEach((item, index) => {
+      config[item.type] = {
+        label: item.type,
+        color: colors[index],
+      };
+    });
+
+    return config;
+  }, [expenseData]);
+
+  // Calculate total
+  const total = React.useMemo(() => {
+    return expenseData.reduce((sum, item) => sum + item.amount, 0);
+  }, [expenseData]);
+
+  // Loading state
   if (loading) {
     return (
-      <p className="text-center text-gray-500 dark:text-gray-400">
-        Loading chart...
-      </p>
+      <div className="w-full flex flex-col items-center justify-center py-8">
+        <Loader2 className="h-6 w-6 animate-spin text-blue-600 dark:text-blue-400 mb-2" />
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          Loading expense data...
+        </span>
+      </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
-      <p className="text-center text-red-500 dark:text-red-400">{error}</p>
+      <div className="w-full flex flex-col items-center justify-center py-8">
+        <div className="text-sm text-red-600 dark:text-red-400 text-center">
+          <p>{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (expenseData.length === 0) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-8">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+          No expense data available for this month
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="w-full">
       <div className="flex flex-col items-center">
-        <div className="w-full flex justify-center">
-          <div className="w-full max-w-[180px]">
-            <ChartContainer config={chartConfig} className="aspect-square h-[160px]">
-              <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+        {/* Chart Container - centered with more space */}
+        <div className="w-full flex justify-center mb-6">
+          <div className="w-full max-w-[220px]">
+            <ChartContainer
+              config={chartConfig}
+              className="aspect-square h-[200px]"
+            >
+              <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
                 <ChartTooltip
                   cursor={false}
                   content={
@@ -115,13 +174,13 @@ export function ExpenseChart() {
                   }
                 />
                 <Pie
-                  data={pieData}
+                  data={chartData}
                   dataKey="value"
                   nameKey="name"
-                  innerRadius={40}
-                  outerRadius={65}
+                  innerRadius={50}
+                  outerRadius={80}
                   strokeWidth={2}
-                  paddingAngle={1}
+                  paddingAngle={2}
                   strokeOpacity={0.8}
                 >
                   <Label
@@ -139,15 +198,15 @@ export function ExpenseChart() {
                           >
                             <tspan
                               x={cx}
-                              y={cy - 4}
-                              className="fill-blue-700 dark:fill-blue-300 text-lg font-bold"
+                              y={cy - 6}
+                              className="fill-blue-700 dark:fill-blue-300 text-xl font-bold"
                             >
                               Rp {total.toLocaleString()}
                             </tspan>
                             <tspan
                               x={cx}
-                              y={cy + 14}
-                              className="fill-blue-600/70 dark:fill-blue-400/70 text-[10px]"
+                              y={cy + 16}
+                              className="fill-blue-600/70 dark:fill-blue-400/70 text-xs"
                             >
                               Total
                             </tspan>
@@ -163,37 +222,32 @@ export function ExpenseChart() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 text-xs mt-4 w-full">
-          {data.map((entry, index) => (
-            <div key={index} className="flex items-center gap-1.5">
-              <div
-                className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                style={{
-                  backgroundColor: defaultColors[index % defaultColors.length],
-                }}
-              />
-              <span className="text-gray-700 dark:text-gray-300 truncate">
-                {entry.type}
-              </span>
-              <span className="text-gray-500 dark:text-gray-400 text-[10px] ml-auto">
-                {getPercentage(entry)}%
-              </span>
-            </div>
-          ))}
+        {/* Legend - below the chart with better spacing */}
+        <div className="w-full px-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm max-w-md mx-auto">
+            {chartData.map((entry, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-sm flex-shrink-0"
+                  style={{ backgroundColor: entry.fill }}
+                ></div>
+                <span className="text-gray-700 dark:text-gray-300 truncate flex-1">
+                  {entry.name}
+                </span>
+                <span className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+                  {expenseData.find((item) => item.type === entry.name)
+                    ?.percentage || 0}
+                  %
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-2 flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-          {changeFromLastMonth >= 0 ? (
-            <>
-              <TrendingUp className="h-3 w-3" />
-              <span>Spending up {changeFromLastMonth}% from last month</span>
-            </>
-          ) : (
-            <>
-              <TrendingDown className="h-3 w-3" />
-              <span>Spending down {Math.abs(changeFromLastMonth)}% from last month</span>
-            </>
-          )}
+        {/* Trend Indicator - with more spacing */}
+        <div className="mt-4 flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+          <TrendingUp className="h-3 w-3" />
+          <span>Current month's spending breakdown</span>
         </div>
       </div>
     </div>

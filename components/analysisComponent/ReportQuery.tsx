@@ -1,37 +1,37 @@
-import { useState } from "react";
+import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { IconSend, IconRobot } from '@tabler/icons-react';
 
 export function ReportQuery() {
-  const [input, setInput] = useState("");
-  const [response, setResponse] = useState("");
+  const [input, setInput] = useState('');
+  const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit() {
     if (!input.trim()) return;
     setLoading(true);
-    setResponse("");
+    setResponse('');
     setError(null);
 
     try {
-      const res = await fetch("/api/analytics/ai_assistant", {
-        method: "POST",
+      const res = await fetch('/api/analytics/ai_assistant', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: input }),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to get AI response");
+        throw new Error('Failed to get AI response');
       }
 
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       let done = false;
-      let aiResponse = "";
+      let aiResponse = '';
 
       while (!done) {
         const { value, done: doneReading } = await reader!.read();
@@ -42,7 +42,7 @@ export function ReportQuery() {
         }
       }
     } catch (err: any) {
-      setError(err.message || "Unknown error");
+      setError(err.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,8 @@ export function ReportQuery() {
           </p>
         </div>
         <p className="text-sm text-gray-700 dark:text-gray-300 ml-7">
-          Ask me anything about your spending patterns, budget optimization, or saving tips!
+          Ask me anything about your spending patterns, budget optimization, or
+          saving tips!
         </p>
       </div>
 
@@ -68,7 +69,11 @@ export function ReportQuery() {
       <div className="whitespace-pre-wrap p-4 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[100px]">
         {error && <p className="text-red-500">Error: {error}</p>}
         {!error && response && <>{response}</>}
-        {!error && !response && !loading && <p className="text-gray-500">Ask a question below to see a response.</p>}
+        {!error && !response && !loading && (
+          <p className="text-gray-500">
+            Ask a question below to see a response.
+          </p>
+        )}
       </div>
 
       {/* Input area */}
@@ -86,7 +91,7 @@ export function ReportQuery() {
         disabled={loading}
       >
         <IconSend size={16} />
-        {loading ? "Loading..." : "Ask Question"}
+        {loading ? 'Loading...' : 'Ask Question'}
       </Button>
     </div>
   );

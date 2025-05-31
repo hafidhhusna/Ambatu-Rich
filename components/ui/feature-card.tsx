@@ -1,14 +1,16 @@
-import React from "react";
-import { FeatureCardProps } from "@/types/types";
+import React from 'react';
+import { FeatureCardProps } from '@/types/types';
 
-export function FeatureCard({ 
-  icon, 
-  title, 
-  description, 
-  bgColor = "bg-blue-100",
+export function FeatureCard({
+  icon,
+  title,
+  description,
+  bgColor = 'bg-blue-100',
 }: FeatureCardProps) {
   return (
-    <div className={`flex items-start gap-4 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm`}>
+    <div
+      className={`flex items-start gap-4 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm`}
+    >
       <div
         className={`${bgColor} p-3 rounded-full flex items-center justify-center shrink-0`}
       >

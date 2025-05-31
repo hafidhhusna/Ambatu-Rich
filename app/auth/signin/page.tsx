@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,10 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { BottomGradient } from '@/components/ui/bottom-gradient';
 import { LabelInputContainer } from '@/components/ui/label-input-container';
+import {
+  performCookieCleanup,
+  startCookieMonitoring,
+} from '@/lib/cookie-utils';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -22,6 +26,24 @@ export default function SignInPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Emergency cookie clear on every page load
+  useEffect(() => {
+    const clearAllCookies = () => {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const eqPos = cookie.indexOf('=');
+        const name =
+          eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+
+        // Multiple clearing attempts
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=localhost`;
+      }
+    };
+
+    clearAllCookies();
+  }, []);
 
   // Define validation schema with Zod - accepts either email or username
   const signInSchema = z.object({
@@ -50,6 +72,14 @@ export default function SignInPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Clear cookies before every signin attempt
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+    }
+
     try {
       signInSchema.parse(formData);
       setErrors({});
@@ -68,16 +98,10 @@ export default function SignInPage() {
 
     setIsLoading(true);
 
-    // Prepare credentials for NextAuth
-    const credentials = {
-      emailOrUsername: formData.emailOrUsername,
-      password: formData.password,
-    };
-
-    // First try to authenticate using NextAuth credentials
     signIn('credentials', {
       redirect: false,
-      ...credentials,
+      emailOrUsername: formData.emailOrUsername,
+      password: formData.password,
     })
       .then((result) => {
         if (result?.error) {
@@ -107,6 +131,7 @@ export default function SignInPage() {
 
   const handleGoogleSignIn = () => {
     setIsLoading(true);
+
     signIn('google', { callbackUrl: '/' }).catch((error) => {
       console.error('Google sign in failed:', error);
       toast.error('Google sign in failed', {
@@ -170,7 +195,7 @@ export default function SignInPage() {
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='Enter your password'
+                  placeholder="Enter your password"
                   className="pl-10 pr-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                   value={formData.password}
                   onChange={handleChange}

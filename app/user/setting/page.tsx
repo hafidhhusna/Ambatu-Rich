@@ -66,7 +66,9 @@ export default function SettingsPage() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState<string>('');
+  const [profileImage, setProfileImage] = useState<string>(
+    session?.user?.image || ''
+  );
 
   // Redirect if not authenticated
   if (status === 'unauthenticated') {
@@ -93,26 +95,7 @@ export default function SettingsPage() {
     },
   });
 
-  // Fetch profile image separately
-  React.useEffect(() => {
-    const fetchProfileImage = async () => {
-      try {
-        const response = await fetch('/api/user/profile-image');
-        if (response.ok) {
-          const data = await response.json();
-          setProfileImage(data.image || '');
-        }
-      } catch (error) {
-        console.error('Error fetching profile image:', error);
-      }
-    };
-
-    if (session?.user) {
-      fetchProfileImage();
-    }
-  }, [session?.user]);
-
-  // Update form when session changes
+  // Update form and states when session changes
   React.useEffect(() => {
     if (session?.user) {
       form.reset({
@@ -120,11 +103,13 @@ export default function SettingsPage() {
         username: session.user.username || '',
         email: session.user.email || '',
       });
+      setProfileImage(session.user.image || '');
     }
   }, [
     session?.user?.name,
     session?.user?.username,
     session?.user?.email,
+    session?.user?.image,
     form,
   ]);
 
@@ -224,12 +209,12 @@ export default function SettingsPage() {
       // Update local states immediately for UI feedback
       setProfileImage(result.user.image || '');
 
-      // Update session with the correct format for JWT strategy (excluding image)
+      // Update session with the correct format for JWT strategy
       const sessionUpdateResult = await update({
         user: {
           name: result.user.name,
           username: result.user.username,
-          // image: result.user.image, // Excluded to prevent headers too big error
+          image: result.user.image,
         },
       });
 
@@ -327,7 +312,9 @@ export default function SettingsPage() {
                   <div className="flex justify-center sm:justify-start mb-6">
                     <div className="relative group">
                       <Avatar className="h-24 w-24 border-2 border-blue-100 dark:border-blue-900">
-                        <AvatarImage src={profileImage} />
+                        <AvatarImage
+                          src={profileImage || session?.user?.image || ''}
+                        />
                         <AvatarFallback className="text-3xl bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                           {userInitial}
                         </AvatarFallback>
@@ -415,7 +402,9 @@ export default function SettingsPage() {
               <div className="space-y-6">
                 <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
                   <Avatar className="h-24 w-24 border-2 border-blue-100 dark:border-blue-900">
-                    <AvatarImage src={profileImage} />
+                    <AvatarImage
+                      src={profileImage || session?.user?.image || ''}
+                    />
                     <AvatarFallback className="text-3xl bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                       {userInitial}
                     </AvatarFallback>

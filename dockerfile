@@ -71,6 +71,9 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
+# Copy custom server.js
+COPY --from=builder /app/server.js ./server.js
+
 # Copy Prisma files
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/prisma ./prisma
@@ -79,21 +82,16 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/tesseract.js-core ./node_modules/tesseract.js-core
 COPY --from=builder /app/node_modules/tesseract.js ./node_modules/tesseract.js
 
-# Create tessdata directory and download training data
+# Create tessdata directory and copy training data
 RUN mkdir -p ./tessdata
-RUN apk add --no-cache wget
-RUN wget -O ./tessdata/eng.traineddata https://github.com/tesseract-ocr/tessdata_fast/raw/main/eng.traineddata
-RUN wget -O ./tessdata/ind.traineddata https://github.com/tesseract-ocr/tessdata_fast/raw/main/ind.traineddata
-RUN gzip ./tessdata/eng.traineddata
-RUN gzip ./tessdata/ind.traineddata
-
-# Set Tesseract environment variables
-ENV TESSDATA_PREFIX=/app/tessdata
+COPY --from=builder /app/eng.traineddata ./tessdata/
+COPY --from=builder /app/ind.traineddata ./tessdata/
 
 # Copy additional required node_modules for production
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
+COPY --from=builder /app/node_modules/next ./node_modules/next
 
 USER nextjs
 

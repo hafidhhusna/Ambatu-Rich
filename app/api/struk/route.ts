@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     console.log('Session : ', session);
 
     if (!session || !session.id) {
-      alert('Unauthorized User!');
+      console.log('❌ No session found - unauthorized');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

@@ -6,16 +6,7 @@ export const session = async ({ session, token }: any) => {
   return session;
 };
 
-export const getUserSession = async (): Promise<
-  (User & { id: string }) | null
-> => {
+export const getUserSession = async (): Promise<User | null> => {
   const authUserSession = await getServerSession(authOptions);
-  if (!authUserSession?.user?.id) {
-    return null;
-  }
-
-  return {
-    ...authUserSession.user,
-    id: authUserSession.user.id,
-  };
+  return authUserSession?.user || null;
 };
